@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/../../src/")
-set(CORE_DIR "${SOURCE_DIR}/core/")
+set(CORE_DIR   "${SOURCE_DIR}/core/")
 set(COMMON_DIR "${CORE_DIR}/common/")
 set(VECTOR_DIR "${CORE_DIR}/vector/")
 
