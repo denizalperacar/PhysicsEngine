@@ -38,9 +38,6 @@ PE_BEGIN
 
 
 #define PE_VECTOR
-#define PE_CAMERA
-#define PE_TRANSFERTODEVICE
-#define PE_VOXEL
 
 PE_END
 

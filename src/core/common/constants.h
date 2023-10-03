@@ -10,6 +10,16 @@ PE_BEGIN
 // constants
 constexpr float pi = 3.1415926535897932385f;
 
+// Thread constants
+constexpr uint32_t NUM_THREADS_MIN = 32;
+constexpr uint32_t NUM_THREADS_64  = 64;
+constexpr uint32_t NUM_THREADS_128 = 128;
+constexpr uint32_t NUM_THREADS_256 = 256;
+constexpr uint32_t NUM_THREADS_512 = 512;
+constexpr uint32_t NUM_THREADS_1024 = 1024;
+constexpr uint32_t NUM_THREADS_MAX = 1024;
+
+
 PE_END
 
 
