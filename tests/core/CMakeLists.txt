@@ -5,7 +5,7 @@ project(physics_engine LANGUAGES CXX CUDA)
 
 option(USE_CUDA "Use CUDA" ON)
 
-set(fmt_DIR "/home/deniz/codes/fmt/fmt/build/")
+set(fmt_DIR "${CMAKE_SOURCE_DIR}/../../packages/fmt/")
 find_package(fmt REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
