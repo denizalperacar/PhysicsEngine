@@ -46,8 +46,6 @@ class VectorBase {
     return vector_t<T, N>(1);
   }
 
-  // Access Methods
-
   PE_HOST_DEVICE T& operator[](uint32_t index) {
     return ((T*) this)[index];
   }
@@ -71,6 +69,35 @@ class VectorBase {
   PE_HOST_DEVICE const T* data() const {
     return (const T*) this;
   }
+
+  PE_HOST_DEVICE T* begin() {
+    return (T*) this;
+  }
+
+  PE_HOST_DEVICE const T* begin() const {
+    return (const T*) this;
+  } 
+
+  PE_HOST_DEVICE T* end() {
+    return (T*) this + DIM;
+  }
+
+  PE_HOST_DEVICE const T* end() const {
+    return (const T*) this + DIM;
+  }
+
+  template <uint32_t start, uint32_t steps>
+  PE_HOST_DEVICE vector_t<T, steps>& slice() {
+    static_assert(start + steps <= DIM, "Slice out of bounds");
+    return *(vector_t<T, steps>*)(data() + start);
+  }
+
+  template <uint32_t start, uint32_t steps>
+  PE_HOST_DEVICE const vector_t<T, steps>& slice() const {
+    static_assert(start + steps <= DIM, "Slice out of bounds");
+    return *(vector_t<T, M>*)(data() + start);
+  }
+
 
 };
 
