@@ -170,14 +170,13 @@ public:
 
 template <typename T> PE_HOST_DEVICE T min(T a, T b) { return std::min(a, b); }
 template <typename T> PE_HOST_DEVICE T max(T a, T b) { return std::max(a, b); }
-template <typename T> PE_HOST_DEVICE T clamp(T a, T b, T c) { return a < b ? b : (c < a ? c : a); }
+template <typename T> PE_HOST_DEVICE T pow(T a, T b) { return std::pow(a, b); }
+template <typename T> PE_HOST_DEVICE T distance(T a, T b) { return std::abs(a - b); }
 template <typename T> PE_HOST_DEVICE T copysign(T a, T b) { return std::copysign(a, b); }
 template <typename T> PE_HOST_DEVICE T sign(T a) { return std::copysign((T)1, a); }
-template <typename T> PE_HOST_DEVICE T mix(T a, T b, T c) { return a * ((T)1 - c) + b * c; }
 template <typename T> PE_HOST_DEVICE T floor(T a) { return std::floor(a); }
 template <typename T> PE_HOST_DEVICE T ceil(T a) { return std::ceil(a); }
 template <typename T> PE_HOST_DEVICE T abs(T a) { return std::abs(a); }
-template <typename T> PE_HOST_DEVICE T distance(T a, T b) { return std::abs(a - b); }
 template <typename T> PE_HOST_DEVICE T sin(T a) { return std::sin(a); }
 template <typename T> PE_HOST_DEVICE T asin(T a) { return std::asin(a); }
 template <typename T> PE_HOST_DEVICE T cos(T a) { return std::cos(a); }
@@ -189,7 +188,9 @@ template <typename T> PE_HOST_DEVICE T exp(T a) { return std::exp(a); }
 template <typename T> PE_HOST_DEVICE T log(T a) { return std::log(a); }
 template <typename T> PE_HOST_DEVICE T exp2(T a) { return std::exp2(a); }
 template <typename T> PE_HOST_DEVICE T log2(T a) { return std::log2(a); }
-template <typename T> PE_HOST_DEVICE T pow(T a, T b) { return std::pow(a, b); }
+template <typename T> PE_HOST_DEVICE T clamp(T a, T b, T c) { return a < b ? b : (c < a ? c : a); }
+template <typename T> PE_HOST_DEVICE T mix(T a, T b, T c) { return a * ((T)1 - c) + b * c; }
+
 template <typename T> PE_HOST_DEVICE T isfinite(T a) {
 #if defined(__CUDA_ARCH__)
   return ::isfinite(a);
@@ -223,6 +224,7 @@ ELEMENTWISE_OP(operator+, TVEC, a[ind] + b, const TVEC &a, T b)
 ELEMENTWISE_OP(operator-, TVEC, a[ind] - b[ind], const TVEC &a, const TVEC &b)
 ELEMENTWISE_OP(operator-, TVEC, a - b[ind], T a, const TVEC &b)
 ELEMENTWISE_OP(operator-, TVEC, a[ind] - b, const TVEC &a, T b)
+ELEMENTWISE_OP(operator-, TVEC, -a[ind], const TVEC &a)
 
 ELEMENTWISE_OP(operator*, TVEC, a[ind] * b[ind], const TVEC &a, const TVEC &b)
 ELEMENTWISE_OP(operator*, TVEC, a * b[ind], T a, const TVEC &b)
@@ -233,6 +235,28 @@ ELEMENTWISE_OP(operator/, TVEC, a / b[ind], T a, const TVEC &b)
 ELEMENTWISE_OP(operator/, TVEC, a[ind] / b, const TVEC &a, T b)
 
 ELEMENTWISE_OP(min, TVEC, min(a[ind], b[ind]), const TVEC& a, const TVEC& b)
+ELEMENTWISE_OP(min, TVEC, min(a[ind], b), const TVEC& a, T b)
+ELEMENTWISE_OP(min, TVEC, min(a, b[ind]), T a, const TVEC& b)
+
+ELEMENTWISE_OP(max, TVEC, max(a[ind], b[ind]), const TVEC& a, const TVEC& b)
+ELEMENTWISE_OP(max, TVEC, max(a[ind], b), const TVEC& a, T b)
+ELEMENTWISE_OP(max, TVEC, max(a, b[ind]), T a, const TVEC& b)
+
+ELEMENTWISE_OP(pow, TVEC, pow(a[ind], b[ind]), const TVEC& a, const TVEC& b)
+ELEMENTWISE_OP(pow, TVEC, pow(a[ind], b), const TVEC& a, T b)
+ELEMENTWISE_OP(pow, TVEC, pow(a, b[ind]), T a, const TVEC& b)
+
+ELEMENTWISE_OP(distance, TVEC, distance(a[ind], b[ind]), const TVEC& a, const TVEC& b)
+ELEMENTWISE_OP(distance, TVEC, distance(a[ind], b), const TVEC& a, T b)
+ELEMENTWISE_OP(distance, TVEC, distance(a, b[ind]), T a, const TVEC& b)
+
+ELEMENTWISE_OP(copysign, TVEC, copysign(a[ind], b[ind]), const TVEC& a, const TVEC& b)
+ELEMENTWISE_OP(copysign, TVEC, copysign(a[ind], b), const TVEC& a, T b)
+ELEMENTWISE_OP(copysign, TVEC, copysign(a, b[ind]), T a, const TVEC& b)
+
+
+
+
 
 
 ELEMENTWISE_OP(fma, TVEC, fma(a[ind], b[ind], c[ind]), const TVEC& a, const TVEC& b, const TVEC& c)
