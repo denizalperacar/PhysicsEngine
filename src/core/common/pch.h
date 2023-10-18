@@ -2,5 +2,7 @@
 #define F94345FF_187E_4988_B654_1C2243B316B1
 
 #include "common.h"
+#include "../vector/vector_base.h"
+
 
 #endif /* F94345FF_187E_4988_B654_1C2243B316B1 */
