@@ -168,6 +168,81 @@ public:
 #undef PE_VECTOR_BASE
 
 
+template <typename T> PE_HOST_DEVICE T min(T a, T b) { return std::min(a, b); }
+template <typename T> PE_HOST_DEVICE T max(T a, T b) { return std::max(a, b); }
+template <typename T> PE_HOST_DEVICE T clamp(T a, T b, T c) { return a < b ? b : (c < a ? c : a); }
+template <typename T> PE_HOST_DEVICE T copysign(T a, T b) { return std::copysign(a, b); }
+template <typename T> PE_HOST_DEVICE T sign(T a) { return std::copysign((T)1, a); }
+template <typename T> PE_HOST_DEVICE T mix(T a, T b, T c) { return a * ((T)1 - c) + b * c; }
+template <typename T> PE_HOST_DEVICE T floor(T a) { return std::floor(a); }
+template <typename T> PE_HOST_DEVICE T ceil(T a) { return std::ceil(a); }
+template <typename T> PE_HOST_DEVICE T abs(T a) { return std::abs(a); }
+template <typename T> PE_HOST_DEVICE T distance(T a, T b) { return std::abs(a - b); }
+template <typename T> PE_HOST_DEVICE T sin(T a) { return std::sin(a); }
+template <typename T> PE_HOST_DEVICE T asin(T a) { return std::asin(a); }
+template <typename T> PE_HOST_DEVICE T cos(T a) { return std::cos(a); }
+template <typename T> PE_HOST_DEVICE T acos(T a) { return std::acos(a); }
+template <typename T> PE_HOST_DEVICE T tan(T a) { return std::tan(a); }
+template <typename T> PE_HOST_DEVICE T atan(T a) { return std::atan(a); }
+template <typename T> PE_HOST_DEVICE T sqrt(T a) { return std::sqrt(a); }
+template <typename T> PE_HOST_DEVICE T exp(T a) { return std::exp(a); }
+template <typename T> PE_HOST_DEVICE T log(T a) { return std::log(a); }
+template <typename T> PE_HOST_DEVICE T exp2(T a) { return std::exp2(a); }
+template <typename T> PE_HOST_DEVICE T log2(T a) { return std::log2(a); }
+template <typename T> PE_HOST_DEVICE T pow(T a, T b) { return std::pow(a, b); }
+template <typename T> PE_HOST_DEVICE T isfinite(T a) {
+#if defined(__CUDA_ARCH__)
+  return ::isfinite(a);
+#else
+  return std::isfinite(a);
+#endif
+}
+
+inline PE_HOST_DEVICE float fma(float a, float b, float c) { return fmaf(a, b, c); }
+
+
+// define the elemtwise operations on vector
+#define TVEC vector_t<T, D, A>
+#define BVEC vector_t<bool, D, A>
+
+#define ELEMENTWISE_OP(operator, result_type, expression, ...) \
+template<typename T, uint32_t D, size_t A> \
+PE_HOST_DEVICE result_type operator(__VA_ARGS__) { \
+  result_type result; \
+  PE_UNROLL \
+  for (uint32_t ind = 0; ind < D; ind++) { \
+    result[ind] = expression; \
+  } \
+  return result;\
+}
+
+ELEMENTWISE_OP(operator+, TVEC, a[ind] + b[ind], const TVEC &a, const TVEC &b)
+ELEMENTWISE_OP(operator+, TVEC, a + b[ind], T a, const TVEC &b)
+ELEMENTWISE_OP(operator+, TVEC, a[ind] + b, const TVEC &a, T b)
+
+ELEMENTWISE_OP(operator-, TVEC, a[ind] - b[ind], const TVEC &a, const TVEC &b)
+ELEMENTWISE_OP(operator-, TVEC, a - b[ind], T a, const TVEC &b)
+ELEMENTWISE_OP(operator-, TVEC, a[ind] - b, const TVEC &a, T b)
+
+ELEMENTWISE_OP(operator*, TVEC, a[ind] * b[ind], const TVEC &a, const TVEC &b)
+ELEMENTWISE_OP(operator*, TVEC, a * b[ind], T a, const TVEC &b)
+ELEMENTWISE_OP(operator*, TVEC, a[ind] * b, const TVEC &a, T b)
+
+ELEMENTWISE_OP(operator/, TVEC, a[ind] / b[ind], const TVEC &a, const TVEC &b)
+ELEMENTWISE_OP(operator/, TVEC, a / b[ind], T a, const TVEC &b)
+ELEMENTWISE_OP(operator/, TVEC, a[ind] / b, const TVEC &a, T b)
+
+ELEMENTWISE_OP(min, TVEC, min(a[ind], b[ind]), const TVEC& a, const TVEC& b)
+
+
+ELEMENTWISE_OP(fma, TVEC, fma(a[ind], b[ind], c[ind]), const TVEC& a, const TVEC& b, const TVEC& c)
+ELEMENTWISE_OP(fma, TVEC, fma(a[ind], b[ind], c), const TVEC& a, const TVEC& b, T c)
+ELEMENTWISE_OP(fma, TVEC, fma(a[ind], b, c[ind]), const TVEC& a, T b, const TVEC& c)
+ELEMENTWISE_OP(fma, TVEC, fma(a[ind], b, c), const TVEC& a, T b, T c)
+ELEMENTWISE_OP(fma, TVEC, fma(a, b[ind], c[ind]), T a, const TVEC& b, const TVEC& c)
+ELEMENTWISE_OP(fma, TVEC, fma(a, b[ind], c), T a, const TVEC& b, T c)
+ELEMENTWISE_OP(fma, TVEC, fma(a, b, c[ind]), T a, T b, const TVEC& c)
+
 
 PE_END
 
