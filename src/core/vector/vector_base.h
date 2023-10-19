@@ -442,8 +442,43 @@ VECTOR_SPACE_UNIT_VECTOR_3D(M) // moment
 
 #undef VECTOR_SPACE_UNIT_VECTOR_3D
 #undef UNIT_VECTOR_3D
+#undef TVEC
+#undef BVEC
+
+#define NON_TEMPLATED_VECTOR_TYPES(name, T) \
+template <uint32_t D> using name = vector_t<T, D>; \
+template <uint32_t D> using aligned##name = vector_t<T, D, sizeof(T) * D>; \
+template <uint32_t D> using a##name = vector_t<T, D, sizeof(T) * D>; \
+using name##1 = vector_t<T, 1>; \
+using name##2 = vector_t<T, 2>; \
+using name##3 = vector_t<T, 3>; \
+using name##4 = vector_t<T, 4>;
+
+NON_TEMPLATED_VECTOR_TYPES(bvec, bool)
+NON_TEMPLATED_VECTOR_TYPES(vec, float)
+NON_TEMPLATED_VECTOR_TYPES(dvec, double)
+NON_TEMPLATED_VECTOR_TYPES(ivec, int32_t)
+NON_TEMPLATED_VECTOR_TYPES(uvec, uint32_t)
+NON_TEMPLATED_VECTOR_TYPES(u16vec, uint16_t)
+NON_TEMPLATED_VECTOR_TYPES(u64vec, uint64_t)
+NON_TEMPLATED_VECTOR_TYPES(i16vec, int16_t)
+NON_TEMPLATED_VECTOR_TYPES(i64vec, int64_t)
+
+#if defined(__CUDACC__)
+  NON_TEMPLATED_VECTOR_TYPES(hvec, __half)
+#endif
+
+#undef NON_TEMPLATED_VECTOR_TYPES
 
 
+#if defined(__CUDACC__)
+inline PE_HOST_DEVICE float4 to_float4(const vec4& x) { return {x.x, x.y, x.z, x.w}; }
+inline PE_HOST_DEVICE float3 to_float3(const vec3& x) { return {x.x, x.y, x.z}; }
+inline PE_HOST_DEVICE float2 to_float2(const vec2& x) { return {x.x, x.y}; }
+inline PE_HOST_DEVICE vec4 to_vec4(const float4& x) { return {x.x, x.y, x.z, x.w}; }
+inline PE_HOST_DEVICE vec3 to_vec3(const float3& x) { return {x.x, x.y, x.z}; }
+inline PE_HOST_DEVICE vec2 to_vec2(const float2& x) { return {x.x, x.y}; }
+#endif
 
 PE_END
 
