@@ -188,6 +188,7 @@ template <typename T> PE_HOST_DEVICE T exp(T a) { return std::exp(a); }
 template <typename T> PE_HOST_DEVICE T log(T a) { return std::log(a); }
 template <typename T> PE_HOST_DEVICE T exp2(T a) { return std::exp2(a); }
 template <typename T> PE_HOST_DEVICE T log2(T a) { return std::log2(a); }
+template <typename T> PE_HOST_DEVICE T log10(T a) { return std::log2(a) / std::log2(10); }
 template <typename T> PE_HOST_DEVICE T clamp(T a, T b, T c) { return a < b ? b : (c < a ? c : a); }
 template <typename T> PE_HOST_DEVICE T mix(T a, T b, T c) { return a * ((T)1 - c) + b * c; }
 
@@ -254,10 +255,30 @@ ELEMENTWISE_OP(copysign, TVEC, copysign(a[ind], b[ind]), const TVEC& a, const TV
 ELEMENTWISE_OP(copysign, TVEC, copysign(a[ind], b), const TVEC& a, T b)
 ELEMENTWISE_OP(copysign, TVEC, copysign(a, b[ind]), T a, const TVEC& b)
 
+ELEMENTWISE_OP(sign, TVEC, sign(a[ind]), const TVEC& a)
+ELEMENTWISE_OP(floor, TVEC, floor(a[ind]), const TVEC& a)
+ELEMENTWISE_OP(ceil, TVEC, ceil(a[ind]), const TVEC& a)
+ELEMENTWISE_OP(abs, TVEC, abs(a[ind]), const TVEC& a)
+ELEMENTWISE_OP(sin, TVEC, sin(a[ind]), const TVEC& a)
+ELEMENTWISE_OP(asin, TVEC, asin(a[ind]), const TVEC& a)
+ELEMENTWISE_OP(cos, TVEC, cos(a[ind]), const TVEC& a)
+ELEMENTWISE_OP(acos, TVEC, acos(a[ind]), const TVEC& a)
+ELEMENTWISE_OP(tan, TVEC, tan(a[ind]), const TVEC& a)
+ELEMENTWISE_OP(atan, TVEC, atan(a[ind]), const TVEC& a)
+ELEMENTWISE_OP(sqrt, TVEC, sqrt(a[ind]), const TVEC& a)
+ELEMENTWISE_OP(exp, TVEC, exp(a[ind]), const TVEC& a)
+ELEMENTWISE_OP(log, TVEC, log(a[ind]), const TVEC& a)
+ELEMENTWISE_OP(log2, TVEC, log2(a[ind]), const TVEC& a)
+ELEMENTWISE_OP(log10, TVEC, log10(a[ind]), const TVEC& a)
+ELEMENTWISE_OP(isfinite, BVEC, isfinite(a[ind]), const TVEC& a)
 
+ELEMENTWISE_OP(clamp, TVEC, clamp(a[ind], b[ind], c[ind]), const TVEC& a, const TVEC& b, const TVEC& c)
+ELEMENTWISE_OP(clamp, TVEC, clamp(a[ind], b[ind], c), const TVEC& a, const TVEC& b, T c)
+ELEMENTWISE_OP(clamp, TVEC, clamp(a[ind], b, c[ind]), const TVEC& a, T b, const TVEC& c)
+ELEMENTWISE_OP(clamp, TVEC, clamp(a[ind], b, c), const TVEC& a, T b, T c)
 
-
-
+ELEMENTWISE_OP(mix, TVEC, a[ind] * ((T)1 - c[i]) + b[ind] * c[ind], const TVEC& a, const TVEC& b, const TVEC& c)
+ELEMENTWISE_OP(mix, TVEC, a[ind] * ((T)1 - c) + b[ind] * c, const TVEC& a, const TVEC& b, T c)
 
 ELEMENTWISE_OP(fma, TVEC, fma(a[ind], b[ind], c[ind]), const TVEC& a, const TVEC& b, const TVEC& c)
 ELEMENTWISE_OP(fma, TVEC, fma(a[ind], b[ind], c), const TVEC& a, const TVEC& b, T c)
@@ -266,6 +287,65 @@ ELEMENTWISE_OP(fma, TVEC, fma(a[ind], b, c), const TVEC& a, T b, T c)
 ELEMENTWISE_OP(fma, TVEC, fma(a, b[ind], c[ind]), T a, const TVEC& b, const TVEC& c)
 ELEMENTWISE_OP(fma, TVEC, fma(a, b[ind], c), T a, const TVEC& b, T c)
 ELEMENTWISE_OP(fma, TVEC, fma(a, b, c[ind]), T a, T b, const TVEC& c)
+
+template <typename T, uint32_t N, size_t A>
+PE_DEVICE void atomic_add(T* dst, const vector_t<T, N, A>& a) {
+	TCNN_PRAGMA_UNROLL
+	for (uint32_t i = 0; i < N; ++i) {
+		atomicAdd(dst + i, a[i]);
+	}
+}
+
+#undef ELEMENTWISE_OP
+
+#define INPLACE_EOP(operator, out_type, expression) \
+template<typename T, uint32_t D, size_t A> \
+PE_HOST_DEVICE TVEC& operator(TVEC &a, out_type b) { \
+  PE_UNROLL \
+  for (uint32_t ind = 0; ind < D; ind++) { \
+    expression; \
+  } \
+  return a; \
+}
+
+INPLACE_EOP(operator*=, const TVEC&, a[ind] *= b[ind])
+INPLACE_EOP(operator/=, const TVEC&, a[ind] /= b[ind])
+INPLACE_EOP(operator+=, const TVEC&, a[ind] += b[ind])
+INPLACE_EOP(operator-=, const TVEC&, a[ind] -= b[ind])
+
+INPLACE_EOP(operator*=, T, a[i] *= b)
+INPLACE_EOP(operator/=, T, a[i] /= b)
+
+#undef INPLACE_EOP
+
+#define REDUCTION_EOP(operator, result_type, expression, initial_value, ...) \
+template<typename T, uint32_t D, size_t A> \
+PE_HOST_DEVICE result_type operator(__VA_ARGS__) { \
+  result_type result = initial_value; \
+  PE_UNROLL \
+  for (uint32_t ind = 0; ind < D; ind++) { \
+    expression; \
+  } \
+  return result;\
+}
+
+REDUCTION_EOP(dot, T, result += a[ind] * b[ind], (T) 0, const TVEC& a, const TVEC& b)
+REDUCTION_EOP(sum, T, result += a[ind] + b[ind], (T) 0, const TVEC& a, const TVEC& b)
+REDUCTION_EOP(mean, T, result += a[ind] / D, (T) 0, const TVEC& a)
+REDUCTION_EOP(prod, T, result *= a[ind], (T) 1, const TVEC& a)
+REDUCTION_EOP(product, T, result *= a[ind], (T) 1, const TVEC& a)
+REDUCTION_EOP(min, T, min(result, a[ind]), a[0], const TVEC& a)
+REDUCTION_EOP(max, T, max(result, a[ind]), a[0], const TVEC& a)
+REDUCTION_EOP(length2, T, result += a[ind] * a[ind], (T) 0, const TVEC& a)
+REDUCTION_EOP(squared_sum, T, result += a[ind] * a[ind], (T) 0, const TVEC& a)
+REDUCTION_EOP(any, bool, result || a[ind], false, const BVEC& a)
+REDUCTION_EOP(all, bool, result && a[ind], true, const BVEC& a)
+REDUCTION_EOP(none, bool, result && !a[ind], true, const BVEC& a)
+REDUCTION_EOP(operator==, bool, result &= a[ind] == b[ind], true, const TVEC& a, const TVEC& b)
+REDUCTION_EOP(operator!=, bool, result &= a[ind] != b[ind], true, const TVEC& a, const TVEC& b)
+REDUCTION_EOP(close, bool, result &= distance(a[ind], b[ind]) < eps, true, const TVEC& a, const TVEC& b, T eps)
+
+#undef REDUCTION_EOP
 
 
 PE_END
