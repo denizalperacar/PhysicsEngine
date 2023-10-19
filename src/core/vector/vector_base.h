@@ -277,7 +277,7 @@ ELEMENTWISE_OP(clamp, TVEC, clamp(a[ind], b[ind], c), const TVEC& a, const TVEC&
 ELEMENTWISE_OP(clamp, TVEC, clamp(a[ind], b, c[ind]), const TVEC& a, T b, const TVEC& c)
 ELEMENTWISE_OP(clamp, TVEC, clamp(a[ind], b, c), const TVEC& a, T b, T c)
 
-ELEMENTWISE_OP(mix, TVEC, a[ind] * ((T)1 - c[i]) + b[ind] * c[ind], const TVEC& a, const TVEC& b, const TVEC& c)
+ELEMENTWISE_OP(mix, TVEC, a[ind] * ((T)1 - c[ind]) + b[ind] * c[ind], const TVEC& a, const TVEC& b, const TVEC& c)
 ELEMENTWISE_OP(mix, TVEC, a[ind] * ((T)1 - c) + b[ind] * c, const TVEC& a, const TVEC& b, T c)
 
 ELEMENTWISE_OP(fma, TVEC, fma(a[ind], b[ind], c[ind]), const TVEC& a, const TVEC& b, const TVEC& c)
@@ -290,7 +290,7 @@ ELEMENTWISE_OP(fma, TVEC, fma(a, b, c[ind]), T a, T b, const TVEC& c)
 
 template <typename T, uint32_t N, size_t A>
 PE_DEVICE void atomic_add(T* dst, const vector_t<T, N, A>& a) {
-	TCNN_PRAGMA_UNROLL
+	PE_UNROLL
 	for (uint32_t i = 0; i < N; ++i) {
 		atomicAdd(dst + i, a[i]);
 	}
@@ -313,8 +313,8 @@ INPLACE_EOP(operator/=, const TVEC&, a[ind] /= b[ind])
 INPLACE_EOP(operator+=, const TVEC&, a[ind] += b[ind])
 INPLACE_EOP(operator-=, const TVEC&, a[ind] -= b[ind])
 
-INPLACE_EOP(operator*=, T, a[i] *= b)
-INPLACE_EOP(operator/=, T, a[i] /= b)
+INPLACE_EOP(operator*=, T, a[ind] *= b)
+INPLACE_EOP(operator/=, T, a[ind] /= b)
 
 #undef INPLACE_EOP
 
@@ -341,11 +341,108 @@ REDUCTION_EOP(squared_sum, T, result += a[ind] * a[ind], (T) 0, const TVEC& a)
 REDUCTION_EOP(any, bool, result || a[ind], false, const BVEC& a)
 REDUCTION_EOP(all, bool, result && a[ind], true, const BVEC& a)
 REDUCTION_EOP(none, bool, result && !a[ind], true, const BVEC& a)
+REDUCTION_EOP(has, bool, result || (a[ind] == b), false, const BVEC& a, T b)
 REDUCTION_EOP(operator==, bool, result &= a[ind] == b[ind], true, const TVEC& a, const TVEC& b)
 REDUCTION_EOP(operator!=, bool, result &= a[ind] != b[ind], true, const TVEC& a, const TVEC& b)
 REDUCTION_EOP(close, bool, result &= distance(a[ind], b[ind]) < eps, true, const TVEC& a, const TVEC& b, T eps)
 
 #undef REDUCTION_EOP
+
+template <typename T, uint32_t D, size_t A>
+PE_HOST_DEVICE T length(const TVEC& a) {
+  return sqrt(length2(a));
+}
+
+template <typename T, uint32_t D, size_t A>
+PE_HOST_DEVICE T distance(const TVEC& a, const TVEC& b) {
+  return length(a - b);
+}
+
+template <typename T, uint32_t D, size_t A>
+PE_HOST_DEVICE TVEC normalize(const TVEC& a) {
+  T len = length(a);
+  
+  if (len <= (T)0) {
+    TVEC result{T(0)};
+    result[0] = (T)1;
+    return result;
+  }
+
+  return a / length(a);
+}
+
+template <typename T, uint32_t D, size_t A>
+PE_HOST_DEVICE TVEC cross(const TVEC& a, const TVEC& b) {
+  static_assert(D == 3, "Cross product is only defined for 3D vectors");
+  return TVEC(a.y * b.z - a.z * b.y,
+              a.z * b.x - a.x * b.z,
+              a.x * b.y - a.y * b.x);
+}
+
+template <typename T, uint32_t D, size_t A>
+PE_HOST_DEVICE TVEC reflect(const TVEC& a, const TVEC& n) {
+  return a - (T)2 * dot(a, n) * n;
+}
+
+template <typename T, uint32_t D, size_t A>
+PE_HOST_DEVICE TVEC project(const TVEC& a, const TVEC& n) {
+  return a - dot(a, n) * n;
+}
+
+template <typename T, uint32_t D, size_t A>
+PE_HOST_DEVICE TVEC refract(const TVEC& a, const TVEC& n, T eta) {
+  T d = dot(a, n);
+  T k = (T)1 - eta * eta * ((T)1 - d * d);
+  if (k < (T)0) {
+    return TVEC(T(0));
+  }
+  return eta * a - (eta * d + sqrt(k)) * n;
+}
+
+template <typename T, uint32_t D, size_t A>
+PE_HOST_DEVICE TVEC faceforward(const TVEC& n, const TVEC& i, const TVEC& nref) {
+	return n * -copysign((T)1, dot(i, nref));
+}
+
+
+template <typename T, uint32_t D, size_t A>
+PE_HOST_DEVICE TVEC unit_vector(int direction) {
+  TVEC result{T(0)};
+  result[direction] = (T)1;
+  return result;
+}
+
+
+/*
+  Define the unit vectors in 3D space
+*/
+#define UNIT_VECTOR_3D(var_type, dir_name, direction) \
+template <typename T, size_t A> \
+PE_HOST_DEVICE vector_t<T, 3, A> var_type##dir_name() { \
+  int dir = direction; \
+  vector_t<T, 3, A> result{T(0)}; \
+  result[dir - 1] = (T)1; \
+  return result; \
+}
+
+#define VECTOR_SPACE_UNIT_VECTOR_3D(varname) \
+UNIT_VECTOR_3D(varname, 1, 1) \
+UNIT_VECTOR_3D(varname, x, 1) \
+UNIT_VECTOR_3D(varname, 2, 2) \
+UNIT_VECTOR_3D(varname, y, 2) \
+UNIT_VECTOR_3D(varname, 3, 3) \
+UNIT_VECTOR_3D(varname, z, 3) 
+
+VECTOR_SPACE_UNIT_VECTOR_3D(u) // principal coordinates
+VECTOR_SPACE_UNIT_VECTOR_3D(p) // positional coordinates
+VECTOR_SPACE_UNIT_VECTOR_3D(v) // velocity
+VECTOR_SPACE_UNIT_VECTOR_3D(a) // acceleration
+VECTOR_SPACE_UNIT_VECTOR_3D(F) // force
+VECTOR_SPACE_UNIT_VECTOR_3D(M) // moment
+
+#undef VECTOR_SPACE_UNIT_VECTOR_3D
+#undef UNIT_VECTOR_3D
+
 
 
 PE_END
