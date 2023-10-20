@@ -23,6 +23,7 @@
 #include <fstream>
 #include <chrono>
 #include <cstdint>
+#include <algorithm>
 
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
