@@ -5,7 +5,12 @@
 
 PE_BEGIN
 
+template <class...> struct conjunction : std::true_type {};
+template <class B1> struct conjunction<B1> : B1 {};
+template <class B1, class... Bn> struct conjunction<B1, Bn...> : std::conditional_t<bool(B1::value), conjunction<Bn...>, B1> {};
 
+template <uint32_t N, typename T, typename... Ts>
+using enable_if_size_and_type_match_t = std::enable_if_t<sizeof...(Ts) == N && conjunction<std::is_same<Ts, T>...>::value>;
 
 #define PE_VECTOR_BASE \
   using value_type = T; \
@@ -97,15 +102,18 @@ PE_BEGIN
   PE_HOST_DEVICE static constexpr uint32_t alignment() { return ALIGNMENT; } \
 
 
-
 template <typename T, uint32_t DIM, uint32_t ALIGNMENT=sizeof(T)>
 struct alignas(ALIGNMENT) vector_t {
 
 public:
   PE_VECTOR_BASE
-
-private:  
   T elements[DIM];
+  template <typename...Tn, typename = enable_if_size_and_type_match_t<DIM, T, Tn...>>
+  PE_HOST_DEVICE vector_t(Tn... values) : elements{values...} {}
+  PE_HOST_DEVICE vector_t(std::initializer_list<T> values) {
+    assert(values.size() == DIM, "Initializer list size does not match vector size");
+    std::copy(values.begin(), values.end(), elements);
+  }
 };
 
 template <typename T, uint32_t ALIGNMENT>

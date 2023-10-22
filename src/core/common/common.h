@@ -31,6 +31,14 @@
 #include <cuda_fp16.h>
 #include "fmt/core.h"
 
+#include <cstddef>
+#include <type_traits>
+#include <initializer_list>
+
+#if defined(__CUDACC__)
+#  include <cuda_fp16.h>
+#endif
+
 using namespace std::chrono;
 
 PE_BEGIN
@@ -44,6 +52,7 @@ PE_BEGIN
 PE_HOST_DEVICE inline float degrees_to_radians(float degrees) {
 	return degrees * pi / 180.0f;
 }
+
 
 PE_END
 
