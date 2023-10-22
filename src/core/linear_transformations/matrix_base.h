@@ -100,8 +100,25 @@ struct matrix_t {
     rows[ 3 ] = vec4;
   }
 
-  
+  // stacks vectors one by one on top of each other
+  template<typename... Ts, typename = enable_if_all_vectors_t<T, M, N, Ts...>>
+  PE_HOST_DEVICE matrix_t<T, M, N> stack(Ts... vectors) {
+    rows = { vectors()... };
+    return *this;
+  }
 
+  template <typename T, uint32_t U, uint32_t V>
+  PE_HOST_DEVICE matrix_t(const matrix_t<T, U, V>& other) {
+    PE_UNROLL
+    for (uint32_t i = 0; i < M; i++) {
+      PE_UNROLL
+      for (uint32_t j = 0; j < N; j++) {
+        rows[ i ][ j ] = (i < U && j < V) ? other.rows[ i ][ j ] : (T) 0;
+      }
+    }
+  }
+
+  
 
   union {
     vector_t<T, M> rows[ N ];
