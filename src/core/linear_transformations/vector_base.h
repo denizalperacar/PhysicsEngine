@@ -191,6 +191,7 @@ template <typename T> PE_HOST_DEVICE T cos(T a) { return std::cos(a); }
 template <typename T> PE_HOST_DEVICE T acos(T a) { return std::acos(a); }
 template <typename T> PE_HOST_DEVICE T tan(T a) { return std::tan(a); }
 template <typename T> PE_HOST_DEVICE T atan(T a) { return std::atan(a); }
+template <typename T> PE_HOST_DEVICE T tanh(T a) { return std::tanh(a); }
 template <typename T> PE_HOST_DEVICE T sqrt(T a) { return std::sqrt(a); }
 template <typename T> PE_HOST_DEVICE T exp(T a) { return std::exp(a); }
 template <typename T> PE_HOST_DEVICE T log(T a) { return std::log(a); }
@@ -272,6 +273,7 @@ ELEMENTWISE_OP(asin, TVEC, asin(a[ind]), const TVEC& a)
 ELEMENTWISE_OP(cos, TVEC, cos(a[ind]), const TVEC& a)
 ELEMENTWISE_OP(acos, TVEC, acos(a[ind]), const TVEC& a)
 ELEMENTWISE_OP(tan, TVEC, tan(a[ind]), const TVEC& a)
+ELEMENTWISE_OP(tanh, TVEC, tanh(a[ind]), const TVEC& a)
 ELEMENTWISE_OP(atan, TVEC, atan(a[ind]), const TVEC& a)
 ELEMENTWISE_OP(sqrt, TVEC, sqrt(a[ind]), const TVEC& a)
 ELEMENTWISE_OP(exp, TVEC, exp(a[ind]), const TVEC& a)
