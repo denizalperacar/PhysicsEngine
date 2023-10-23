@@ -9,6 +9,10 @@ int main() {
     std::cout << (b * a)[i] << std::endl;
   }
   
+  PE::vector_t<double, 4> c(1., 2., 3., 4.);
+  PE::vector_t<double, 3> d(4., 5., 6.);
+
+  print(outer(c, d));
 
   std::cout << b(1,1) << std::endl;
   return 0;

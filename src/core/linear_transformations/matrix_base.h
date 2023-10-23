@@ -177,18 +177,67 @@ struct matrix_t {
 // matrix operation definitions
 
 // outer product
+template<typename T, uint32_t R, uint32_t C>
+PE_HOST_DEVICE matrix_t<T, R, C> outer(
+    const vector_t<T, R> &vec1, 
+    const vector_t<T, C> &vec2 ) {
+  
+  matrix_t<T, R, C> result;
+  PE_UNROLL
+  for (uint32_t i = 0; i < C; i++) {
+    PE_UNROLL
+    for (uint32_t j = 0; j < R; j++) {
+      result[ i ][ j ] = vec1[ j ] * vec2[ i ];
+    }
+  }
+  return result;
+}
+
+#define TMAT matrix_t<T, R, C>
+#define TVECR vector_t<T, R>
+#define TVECC vector_t<T, C>
+
+// define element wise operations
+#define ELEMENTWISE_OP(operation, input_type, output_type, expression, ...) \
+template <typename T, uint32_t R, uint32_t C> \
+PE_HOST_DEVICE input_type operation(__VA_ARGS__) { \
+  output_type result; \
+  PE_UNROLL \
+  for (uint32_t i = 0; i < C; i++) { \
+    PE_UNROLL \
+    for (uint32_t j = 0; j < R; j++) { \
+      result[i][j] = expression; \
+    } \
+  } \
+  return result; \
+}
 
 
 
 
+ELEMENTWISE_OP(operator+, TMAT, TMAT, a[i][j] + b[i][j] ,const TMAT &a, const TMAT &b)
+ELEMENTWISE_OP(operator+, TMAT, TMAT, a + b[i][j], T a, const TMAT &b)
+ELEMENTWISE_OP(operator+, TMAT, TMAT, b + a[i][j], const TMAT &a, T b)
 
 
 
 
+#undef TMAT
+#undef ELEMENTWISE_OP
 
 
-
-
+// helper function to print matrix
+template <typename T, uint32_t R, uint32_t C>
+void print(const matrix_t<T, R, C> &mat ) {
+  PE_UNROLL
+  for (uint32_t i = 0; i < R; i++) {
+    PE_UNROLL
+    for (uint32_t j = 0; j < C; j++) {
+      std::cout << mat[ j ][ i ] << " ";
+    }
+    std::cout << std::endl;
+  }
+}
 
 PE_END
 
