@@ -131,7 +131,7 @@ struct matrix_t {
   
   // matrix matrix multiplication
   template <uint32_t P>
-  PE_HOST_DEVICE matrix_t<T, R, P> operator*(const matrix_t<T, C, P> & other) {
+  PE_HOST_DEVICE matrix_t<T, R, P> operator*(const matrix_t<T, C, P>& other) {
     matrix_t<T, R, P> result(0);
     PE_UNROLL
     for (uint32_t i = 0; i < P; i++) {
@@ -179,8 +179,8 @@ struct matrix_t {
 // outer product
 template<typename T, uint32_t R, uint32_t C>
 PE_HOST_DEVICE matrix_t<T, R, C> outer(
-    const vector_t<T, R> &vec1, 
-    const vector_t<T, C> &vec2 ) {
+    const vector_t<T, R>& vec1, 
+    const vector_t<T, C>& vec2 ) {
   
   matrix_t<T, R, C> result;
   PE_UNROLL
@@ -213,40 +213,40 @@ PE_HOST_DEVICE input_type operation(__VA_ARGS__) { \
 }
 
 // operator overloads
-ELEMENTWISE_OP(operator+, TMAT, TMAT, a[i][j] + b[i][j], const TMAT &a, const TMAT &b)
-ELEMENTWISE_OP(operator+, TMAT, TMAT, a + b[i][j], T a, const TMAT &b)
-ELEMENTWISE_OP(operator+, TMAT, TMAT, b + a[i][j], const TMAT &a, T b)
-ELEMENTWISE_OP(operator+, TMAT, TMAT, b[i] + a[i][j], const TMAT &a, const TVECC &b)
-ELEMENTWISE_OP(operator+, TMAT, TMAT, b[i] + b[i][j], const TVECC &a, const TMAT &b)
-ELEMENTWISE_OP(operator+, TMAT, TMAT, b[j] + a[i][j], const TMAT &a, const TVECR &b)
-ELEMENTWISE_OP(operator+, TMAT, TMAT, b[j] + b[i][j], const TVECR &a, const TMAT &b)
+ELEMENTWISE_OP(operator+, TMAT, TMAT, a[i][j] + b[i][j], const TMAT& a, const TMAT& b)
+ELEMENTWISE_OP(operator+, TMAT, TMAT, a + b[i][j], T a, const TMAT& b)
+ELEMENTWISE_OP(operator+, TMAT, TMAT, b + a[i][j], const TMAT& a, T b)
+ELEMENTWISE_OP(operator+, TMAT, TMAT, b[i] + a[i][j], const TMAT& a, const TVECC& b)
+ELEMENTWISE_OP(operator+, TMAT, TMAT, b[i] + b[i][j], const TVECC& a, const TMAT& b)
+ELEMENTWISE_OP(operator+, TMAT, TMAT, b[j] + a[i][j], const TMAT& a, const TVECR& b)
+ELEMENTWISE_OP(operator+, TMAT, TMAT, b[j] + b[i][j], const TVECR& a, const TMAT& b)
 
-ELEMENTWISE_OP(operator/, TMAT, TMAT, a[i][j] / b[i][j], const TMAT &a, const TMAT &b)
-ELEMENTWISE_OP(operator/, TMAT, TMAT, a / b[i][j], T a, const TMAT &b)
-ELEMENTWISE_OP(operator/, TMAT, TMAT, b / a[i][j], const TMAT &a, T b)
-ELEMENTWISE_OP(operator/, TMAT, TMAT, b[i] / a[i][j], const TMAT &a, const TVECC &b)
-ELEMENTWISE_OP(operator/, TMAT, TMAT, b[i] / b[i][j], const TVECC &a, const TMAT &b)
-ELEMENTWISE_OP(operator/, TMAT, TMAT, b[j] / a[i][j], const TMAT &a, const TVECR &b)
-ELEMENTWISE_OP(operator/, TMAT, TMAT, b[j] / b[i][j], const TVECR &a, const TMAT &b)
+ELEMENTWISE_OP(operator/, TMAT, TMAT, a[i][j] / b[i][j], const TMAT& a, const TMAT& b)
+ELEMENTWISE_OP(operator/, TMAT, TMAT, a / b[i][j], T a, const TMAT& b)
+ELEMENTWISE_OP(operator/, TMAT, TMAT, b / a[i][j], const TMAT& a, T b)
+ELEMENTWISE_OP(operator/, TMAT, TMAT, b[i] / a[i][j], const TMAT& a, const TVECC& b)
+ELEMENTWISE_OP(operator/, TMAT, TMAT, b[i] / b[i][j], const TVECC& a, const TMAT& b)
+ELEMENTWISE_OP(operator/, TMAT, TMAT, b[j] / a[i][j], const TMAT& a, const TVECR& b)
+ELEMENTWISE_OP(operator/, TMAT, TMAT, b[j] / b[i][j], const TVECR& a, const TMAT& b)
 
-ELEMENTWISE_OP(operator-, TMAT, TMAT, a[i][j] - b[i][j], const TMAT &a, const TMAT &b)
-ELEMENTWISE_OP(operator-, TMAT, TMAT, a - b[i][j], T a, const TMAT &b)
-ELEMENTWISE_OP(operator-, TMAT, TMAT, b - a[i][j], const TMAT &a, T b)
-ELEMENTWISE_OP(operator-, TMAT, TMAT, b[i] - a[i][j], const TMAT &a, const TVECC &b)
-ELEMENTWISE_OP(operator-, TMAT, TMAT, a[i] - b[i][j], const TVECC &a, const TMAT &b)
-ELEMENTWISE_OP(operator-, TMAT, TMAT, b[j] - a[i][j], const TMAT &a, const TVECR &b)
-ELEMENTWISE_OP(operator-, TMAT, TMAT, a[j] - b[i][j], const TVECR &a, const TMAT &b)
-ELEMENTWISE_OP(operator-, TMAT, TMAT, -a[i][j], const TMAT &a)
+ELEMENTWISE_OP(operator-, TMAT, TMAT, a[i][j] - b[i][j], const TMAT& a, const TMAT& b)
+ELEMENTWISE_OP(operator-, TMAT, TMAT, a - b[i][j], T a, const TMAT& b)
+ELEMENTWISE_OP(operator-, TMAT, TMAT, b - a[i][j], const TMAT& a, T b)
+ELEMENTWISE_OP(operator-, TMAT, TMAT, b[i] - a[i][j], const TMAT& a, const TVECC& b)
+ELEMENTWISE_OP(operator-, TMAT, TMAT, a[i] - b[i][j], const TVECC& a, const TMAT& b)
+ELEMENTWISE_OP(operator-, TMAT, TMAT, b[j] - a[i][j], const TMAT& a, const TVECR& b)
+ELEMENTWISE_OP(operator-, TMAT, TMAT, a[j] - b[i][j], const TVECR& a, const TMAT& b)
+ELEMENTWISE_OP(operator-, TMAT, TMAT, -a[i][j], const TMAT& a)
 
 // element wise function operations
 #define ELEMENTWISE_FOP(op) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[i][j]), const TMAT &a, const TMAT &b) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a, b[i][j]), T a, const TMAT &b) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(b, a[i][j]), const TMAT &a, T b) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(b[i], a[i][j]), const TMAT &a, const TVECC &b) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(b[i], b[i][j]), const TVECC &a, const TMAT &b) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(b[j], a[i][j]), const TMAT &a, const TVECR &b) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(b[j], b[i][j]), const TVECR &a, const TMAT &b)
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[i][j]), const TMAT& a, const TMAT& b) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a, b[i][j]), T a, const TMAT& b) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(b, a[i][j]), const TMAT& a, T b) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(b[i], a[i][j]), const TMAT& a, const TVECC& b) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(b[i], b[i][j]), const TVECC& a, const TMAT& b) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(b[j], a[i][j]), const TMAT& a, const TVECR& b) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(b[j], b[i][j]), const TVECR& a, const TMAT& b)
 
 ELEMENTWISE_FOP(min)
 ELEMENTWISE_FOP(max)
@@ -258,7 +258,7 @@ ELEMENTWISE_FOP(mul)
 #undef ELEMENTWISE_FOP
 
 #define ELEMENTWISE_SOP(op) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j]), const TMAT &a)
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j]), const TMAT& a)
 
 ELEMENTWISE_SOP(sign)
 ELEMENTWISE_SOP(floor)
@@ -280,37 +280,37 @@ ELEMENTWISE_SOP(log10)
 #undef ELEMENTWISE_SOP
 
 #define ELEMENTWISE_TOP(op) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[i][j], c[i][j]), const TMAT &a, const TMAT &b, const TMAT &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a, b[i][j], c[i][j]), T a, const TMAT &b, const TMAT &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b, c[i][j]), const TMAT &a, T b, const TMAT &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[i][j], c), const TMAT &a, const TMAT &b, T c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a, b, c[i][j]), T a, T b, const TMAT &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a, b[i][j], c), T a, const TMAT &b, T c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b, c), const TMAT &a, T b, T c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i], b[i][j], c[i][j]), const TVECC &a, const TMAT &b, const TMAT &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[i], c[i][j]), const TMAT &a, const TVECC &b, const TMAT &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[i][j], c[i]), const TMAT &a, const TMAT &b, const TVECC &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i], b[i], c[i][j]), const TVECC &a, const TVECC &b, const TMAT &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i], b[i][j], c[i]), const TVECC &a, const TMAT &b, const TVECC &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[i], c[i]), const TMAT &a, const TVECC &b, const TVECC &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a, b[i], c[i][j]), T a, const TVECC &b, const TMAT &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i], b, c[i][j]), const TVECC &a, T b, const TMAT &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a, b[i][j], c[i]), T a, const TMAT &b, const TVECC &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i], b[i][j], c), const TVECC &a, const TMAT &b, T c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b, c[i]), const TMAT &a, T b, const TVECC &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[i], c), const TMAT &a, const TVECC &b, T c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[j], b[i][j], c[i][j]), const TVECR &a, const TMAT &b, const TMAT &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[j], c[i][j]), const TMAT &a, const TVECR &b, const TMAT &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[i][j], c[j]), const TMAT &a, const TMAT &b, const TVECR &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[j], b[j], c[i][j]), const TVECR &a, const TVECR &b, const TMAT &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[j], b[i][j], c[j]), const TVECR &a, const TMAT &b, const TVECR &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[j], c[j]), const TMAT &a, const TVECR &b, const TVECR &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a, b[j], c[i][j]), T a, const TVECR &b, const TMAT &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[j], b, c[i][j]), const TVECR &a, T b, const TMAT &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a, b[i][j], c[j]), T a, const TMAT &b, const TVECR &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[j], b[i][j], c), const TVECR &a, const TMAT &b, T c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b, c[j]), const TMAT &a, T b, const TVECR &c) \
-ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[j], c), const TMAT &a, const TVECR &b, T c)
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[i][j], c[i][j]), const TMAT& a, const TMAT& b, const TMAT& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a, b[i][j], c[i][j]), T a, const TMAT& b, const TMAT& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b, c[i][j]), const TMAT& a, T b, const TMAT& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[i][j], c), const TMAT& a, const TMAT& b, T c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a, b, c[i][j]), T a, T b, const TMAT& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a, b[i][j], c), T a, const TMAT& b, T c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b, c), const TMAT& a, T b, T c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i], b[i][j], c[i][j]), const TVECC& a, const TMAT& b, const TMAT& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[i], c[i][j]), const TMAT& a, const TVECC& b, const TMAT& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[i][j], c[i]), const TMAT& a, const TMAT& b, const TVECC& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i], b[i], c[i][j]), const TVECC& a, const TVECC& b, const TMAT& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i], b[i][j], c[i]), const TVECC& a, const TMAT& b, const TVECC& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[i], c[i]), const TMAT& a, const TVECC& b, const TVECC& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a, b[i], c[i][j]), T a, const TVECC& b, const TMAT& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i], b, c[i][j]), const TVECC& a, T b, const TMAT& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a, b[i][j], c[i]), T a, const TMAT& b, const TVECC& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i], b[i][j], c), const TVECC& a, const TMAT& b, T c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b, c[i]), const TMAT& a, T b, const TVECC& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[i], c), const TMAT& a, const TVECC& b, T c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[j], b[i][j], c[i][j]), const TVECR& a, const TMAT& b, const TMAT& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[j], c[i][j]), const TMAT& a, const TVECR& b, const TMAT& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[i][j], c[j]), const TMAT& a, const TMAT& b, const TVECR& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[j], b[j], c[i][j]), const TVECR& a, const TVECR& b, const TMAT& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[j], b[i][j], c[j]), const TVECR& a, const TMAT& b, const TVECR& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[j], c[j]), const TMAT& a, const TVECR& b, const TVECR& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a, b[j], c[i][j]), T a, const TVECR& b, const TMAT& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[j], b, c[i][j]), const TVECR& a, T b, const TMAT& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a, b[i][j], c[j]), T a, const TMAT& b, const TVECR& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[j], b[i][j], c), const TVECR& a, const TMAT& b, T c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b, c[j]), const TMAT& a, T b, const TVECR& c) \
+ELEMENTWISE_OP(op, TMAT, TMAT, op(a[i][j], b[j], c), const TMAT& a, const TVECR& b, T c)
 
 
 ELEMENTWISE_TOP(clamp)
@@ -388,7 +388,7 @@ PE_HOST_DEVICE T determinant(const matrix_t<T, 3, 3>& mat) {
 
 // [TDOO] test this might have made a mistake
 template <typename T>
-PE_HOST_DEVICE T determinant(const matrix_t<T, 4, 4> &mat) {
+PE_HOST_DEVICE T determinant(const matrix_t<T, 4, 4>& mat) {
   return
     + mat(0, 0) * determinant(matrix_t<T, 3, 3>(mat(1, 1), mat(1, 2), mat(1, 3), mat(2, 1), mat(2, 2), mat(2, 3), mat(3, 1), mat(3, 2), mat(3, 3)))
     - mat(0, 1) * determinant(matrix_t<T, 3, 3>(mat(1, 0), mat(1, 2), mat(1, 3), mat(2, 0), mat(2, 2), mat(2, 3), mat(3, 0), mat(3, 2), mat(3, 3)))
@@ -404,7 +404,7 @@ PE_HOST_DEVICE T determinant(const matrix_t<T, 4, 4> &mat) {
 
 // helper function to print matrix
 template <typename T, uint32_t R, uint32_t C>
-void print(const matrix_t<T, R, C> &mat ) {
+void print(const matrix_t<T, R, C>& mat ) {
   PE_UNROLL
   for (uint32_t i = 0; i < R; i++) {
     PE_UNROLL
