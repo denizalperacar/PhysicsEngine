@@ -319,8 +319,40 @@ ELEMENTWISE_TOP(fma)
 
 #undef ELEMENTWISE_TOP
 
+#define INPLACE_OP(operation, type_b, expr) \
+template <typename T, uint32_t R, uint32_t C> \
+PE_HOST_DEVICE TMAT& operation(TMAT& a, type_b b) { \
+	PE_UNROLL \
+	for (uint32_t i = 0; i < C; ++i) { \
+		PE_UNROLL \
+		for (uint32_t j = 0; j < R; ++j) { \
+			expr; \
+		} \
+	} \
+	return a; \
+}
 
+INPLACE_OP(operator+=, const TMAT&, a[i][j] += b[i][j])
+INPLACE_OP(operator+=, const TVECC&, a[i][j] += b[i])
+INPLACE_OP(operator+=, const TVECR&, a[i][j] += b[j])
+INPLACE_OP(operator+=, T, a[i][j] += b)
 
+INPLACE_OP(operator*=, const TMAT&, a[i][j] *= b[i][j])
+INPLACE_OP(operator*=, const TVECC&, a[i][j] *= b[i])
+INPLACE_OP(operator*=, const TVECR&, a[i][j] *= b[j])
+INPLACE_OP(operator*=, T, a[i][j] *= b)
+
+INPLACE_OP(operator/=, const TMAT&, a[i][j] /= b[i][j])
+INPLACE_OP(operator/=, const TVECC&, a[i][j] /= b[i])
+INPLACE_OP(operator/=, const TVECR&, a[i][j] /= b[j])
+INPLACE_OP(operator/=, T, a[i][j] /= b)
+
+INPLACE_OP(operator-=, const TMAT&, a[i][j] -= b[i][j])
+INPLACE_OP(operator-=, const TVECC&, a[i][j] -= b[i])
+INPLACE_OP(operator-=, const TVECR&, a[i][j] -= b[j])
+INPLACE_OP(operator-=, T, a[i][j] -= b)
+
+#undef INPLACE_OP
 
 
 
