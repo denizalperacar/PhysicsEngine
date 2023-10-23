@@ -159,12 +159,12 @@ struct matrix_t {
     return data_;
   }
 
-  PE_HOST_DEVICE T& operator()(uint32_t i, uint32_t j) {
-    return col[ i ][ j ];
+  PE_HOST_DEVICE T& operator()(uint32_t r, uint32_t c) {
+    return col[ c ][ r ];
   }
 
-  PE_HOST_DEVICE const T& operator()(uint32_t i, uint32_t j) const {
-    return col[ i ][ j ];
+  PE_HOST_DEVICE const T& operator()(uint32_t r, uint32_t c) const {
+    return col[ c ][ r ];
   }
 
   union {
@@ -354,7 +354,47 @@ INPLACE_OP(operator-=, T, a[i][j] -= b)
 
 #undef INPLACE_OP
 
+#define REDUCTION_OP(operation, type_result, init, expr, ...) \
+template <typename T, uint32_t R, uint32_t C> \
+PE_HOST_DEVICE type_result operation(__VA_ARGS__) { \
+	type_result result = init; \
+	PE_UNROLL \
+	for (uint32_t i = 0; i < C; ++i) { \
+		PE_UNROLL \
+		for (uint32_t j = 0; j < R; ++j) { \
+			expr; \
+		} \
+	} \
+	return result; \
+}
 
+REDUCTION_OP(operator==, bool, true,  result &= a[i][j] == b[i][j], const TMAT& a, const TMAT& b)
+REDUCTION_OP(operator!=, bool, false, result |= a[i][j] != b[i][j], const TMAT& a, const TMAT& b)
+REDUCTION_OP(isfinite, bool, true, result &= isfinite(a[i][j]), const TMAT& a)
+
+#undef REDUCTION_OP
+
+template <typename T>
+PE_HOST_DEVICE T determinant(const matrix_t<T, 2, 2>& mat) {
+  return mat[0][0] * mat[1][1] - mat[0][1] * mat[1][0];
+}
+
+template <typename T>
+PE_HOST_DEVICE T determinant(const matrix_t<T, 3, 3>& mat) {
+  return + mat(0, 0) * (mat(1, 1) * mat(2, 2) - mat(2, 1) * mat(1, 2)) +
+         - mat(0, 1) * (mat(1, 0) * mat(2, 2) - mat(2, 0) * mat(1, 2)) +
+         + mat(0, 2) * (mat(1, 0) * mat(2, 1) - mat(1, 1) * mat(2, 0));
+}
+
+// [TDOO] test this might have made a mistake
+template <typename T>
+PE_HOST_DEVICE T determinant(const matrix_t<T, 4, 4> &mat) {
+  return
+    + mat(0, 0) * determinant(matrix_t<T, 3, 3>(mat(1, 1), mat(1, 2), mat(1, 3), mat(2, 1), mat(2, 2), mat(2, 3), mat(3, 1), mat(3, 2), mat(3, 3)))
+    - mat(0, 1) * determinant(matrix_t<T, 3, 3>(mat(1, 0), mat(1, 2), mat(1, 3), mat(2, 0), mat(2, 2), mat(2, 3), mat(3, 0), mat(3, 2), mat(3, 3)))
+    + mat(0, 2) * determinant(matrix_t<T, 3, 3>(mat(1, 0), mat(1, 1), mat(1, 3), mat(2, 0), mat(2, 1), mat(2, 3), mat(3, 0), mat(3, 1), mat(3, 3)))
+    - mat(0, 3) * determinant(matrix_t<T, 3, 3>(mat(1, 0), mat(1, 1), mat(1, 2), mat(2, 0), mat(2, 1), mat(2, 2), mat(3, 0), mat(3, 1), mat(3, 2)));
+}
 
 #undef TVECC
 #undef TVECR
