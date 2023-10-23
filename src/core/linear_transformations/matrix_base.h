@@ -174,6 +174,9 @@ struct matrix_t {
 
 };
 
+// matrix operation definitions
+
+// outer product
 
 
 
