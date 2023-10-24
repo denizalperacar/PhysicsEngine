@@ -397,7 +397,7 @@ PE_HOST_DEVICE T determinant(const matrix_t<T, 4, 4>& mat) {
 }
 
 template <typename T, uint32_t N>
-PE_HOST_DEVICE matrix_t<T, N, N>& operator*= (matrix_t<T, N, N>& matrix, const matrix_t<T, N, N>& other) {
+PE_HOST_DEVICE matrix_t<T, N, N>& operator*=(matrix_t<T, N, N>& matrix, const matrix_t<T, N, N>& other) {
   matrix = matrix * other;
   return matrix;
 } 
@@ -506,10 +506,20 @@ PE_HOST_DEVICE matrix_t<T, N, N> inverse(const matrix_t<T, N, N>& m) {
   return adjoint(m) / determinant(m);
 }
 
+template <typename T>
+PE_HOST_DEVICE matrix_t<T, 3, 3> skew_symmetric_matrix(const vector_t<T, 3>& v) {
+  return {0, v[2], -v[1], -v[2], 0, v[0], v[1], -v[0], 0};
+}
 
+template <typename T>
+PE_HOST_DEVICE matrix_t<T, 3, 3> cross_product_matrix(const vector_t<T, 3>& v) {
+  return {0, v[2], -v[1], -v[2], 0, v[0], v[1], -v[0], 0};
+}
 
-
-
+template <typename T, uint32_t N>
+PE_HOST_DEVICE matrix_t<T, N, N> eye() {
+  return matrix<T, N, N>::identity();
+}
 
 
 #undef TVECC
