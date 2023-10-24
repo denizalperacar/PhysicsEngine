@@ -396,6 +396,122 @@ PE_HOST_DEVICE T determinant(const matrix_t<T, 4, 4>& mat) {
     - mat(0, 3) * determinant(matrix_t<T, 3, 3>(mat(1, 0), mat(1, 1), mat(1, 2), mat(2, 0), mat(2, 1), mat(2, 2), mat(3, 0), mat(3, 1), mat(3, 2)));
 }
 
+template <typename T, uint32_t N>
+PE_HOST_DEVICE matrix_t<T, N, N>& operator*= (matrix_t<T, N, N>& matrix, const matrix_t<T, N, N>& other) {
+  matrix = matrix * other;
+  return matrix;
+} 
+
+template <typename T, uint32_t R, uint32_t C>
+PE_HOST_DEVICE T frobenious_norm(const matrix_t<T, R, C>& mat) {
+  T result = 0;
+  PE_UNROLL
+  for (uint32_t i = 0; i < C; i++) {
+    result += length2(mat[ i ]);
+  }
+  return sqrt(result);
+}
+
+template <typename T, uint32_t R, uint32_t C>
+PE_HOST_DEVICE matrix_t<T, C, R> transpose(const matrix_t<T, R, C>& m) {
+  matrix_t<T, C, R> result;
+  PE_UNROLL
+  for (uint32_t i = 0; i < C; i++) {
+    PE_UNROLL
+    for (uint32_t j = 0; j < R; j++) {
+      result[ j ][ i ] = m[ i ][ j ];
+    }
+  }
+  return result;
+}
+
+template <typename T, uint32_t R, uint32_t C>
+PE_HOST_DEVICE vector_t<T, C> row(const matrix_t<T, R, C>& matrix, int row_index) {
+  vector_t<T, C> result;
+  PE_UNROLL
+  for (uint32_t i = 0; i < C; i++) {
+    result[ i ] = matrix[ i ][ row_index ];
+  }
+  return result;
+}
+
+template <typename T, uint32_t R, uint32_t C, size_t A>
+PE_HOST_DEVICE matrix_t<T, R, C> replace_row(const matrix_t<T, R, C>& m, int r, const vector_t<T, C, A>& row) {
+  matrix_t<T, R, C> result = m;
+  PE_UNROLL
+  for (uint32_t i = 0; i < C; i++) {
+    result[ i ][ r ] = row[ i ];
+  }
+  return result;
+}
+
+template <typename T>
+PE_HOST_DEVICE matrix_t<T, 2, 2> adjoint(const matrix_t<T, 2, 2>& m) {
+  return {m(1, 1), -m(1, 0), -m(0, 1), m(0, 0)};
+}
+
+template <typename T>
+PE_HOST_DEVICE matrix_t<T, 3, 3> adjoint(const matrix_t<T, 3, 3>& m) {
+  const T m00 = determinant(matrix_t<T, 2, 2>{m(1,1), m(1,2), m(2,1), m(2,2)});
+  const T m01 = determinant(matrix_t<T, 2, 2>{m(1,0), m(1,2), m(2,0), m(2,2)});
+  const T m02 = determinant(matrix_t<T, 2, 2>{m(1,0), m(1,1), m(2,0), m(2,1)});
+
+  const T m10 = determinant(matrix_t<T, 2, 2>{m(0,1), m(0,2), m(2,1), m(2,2)});
+  const T m11 = determinant(matrix_t<T, 2, 2>{m(0,0), m(0,2), m(2,0), m(2,2)});
+  const T m12 = determinant(matrix_t<T, 2, 2>{m(0,0), m(0,1), m(2,0), m(2,1)});
+
+  const T m20 = determinant(matrix_t<T, 2, 2>{m(0.1), m(0,2), m(1,1), m(1,2)});
+  const T m21 = determinant(matrix_t<T, 2, 2>{m(0,0), m(0,2), m(1,0), m(1,2)});
+  const T m22 = determinant(matrix_t<T, 2, 2>{m(0,0), m(0,1), m(1,0), m(1,1)});
+  
+  return {
+    m00, -m01, m02,
+    -m10, m11, -m12,
+    m20, -m21, m22
+  };
+}
+
+template <typename T>
+PE_HOST_DEVICE matrix_t<T, 4, 4> adjoint(const matrix_t<T, 4, 4>& m) {
+	const T m00 = determinant(matrix_t<T, 3, 3>{m(1,1), m(2,1), m(3,1), m(1,2), m(2,2), m(3,2), m(1,3), m(2,3), m(3,3)});
+	const T m01 = determinant(matrix_t<T, 3, 3>{m(0,1), m(2,1), m(3,1), m(0,2), m(2,2), m(3,2), m(0,3), m(2,3), m(3,3)});
+	const T m02 = determinant(matrix_t<T, 3, 3>{m(0,1), m(1,1), m(3,1), m(0,2), m(1,2), m(3,2), m(0,3), m(1,3), m(3,3)});
+	const T m03 = determinant(matrix_t<T, 3, 3>{m(0,1), m(1,1), m(2,1), m(0,2), m(1,2), m(2,2), m(0,3), m(1,3), m(2,3)});
+
+	const T m10 = determinant(matrix_t<T, 3, 3>{m(1,0), m(2,0), m(3,0), m(1,2), m(2,2), m(3,2), m(1,3), m(2,3), m(3,3)});
+	const T m11 = determinant(matrix_t<T, 3, 3>{m(0,0), m(2,0), m(3,0), m(0,2), m(2,2), m(3,2), m(0,3), m(2,3), m(3,3)});
+	const T m12 = determinant(matrix_t<T, 3, 3>{m(0,0), m(1,0), m(3,0), m(0,2), m(1,2), m(3,2), m(0,3), m(1,3), m(3,3)});
+	const T m13 = determinant(matrix_t<T, 3, 3>{m(0,0), m(1,0), m(2,0), m(0,2), m(1,2), m(2,2), m(0,3), m(1,3), m(2,3)});
+
+	const T m20 = determinant(matrix_t<T, 3, 3>{m(1,0), m(2,0), m(3,0), m(1,1), m(2,1), m(3,1), m(1,3), m(2,3), m(3,3)});
+	const T m21 = determinant(matrix_t<T, 3, 3>{m(0,0), m(2,0), m(3,0), m(0,1), m(2,1), m(3,1), m(0,3), m(2,3), m(3,3)});
+	const T m22 = determinant(matrix_t<T, 3, 3>{m(0,0), m(1,0), m(3,0), m(0,1), m(1,1), m(3,1), m(0,3), m(1,3), m(3,3)});
+	const T m23 = determinant(matrix_t<T, 3, 3>{m(0,0), m(1,0), m(2,0), m(0,1), m(1,1), m(2,1), m(0,3), m(1,3), m(2,3)});
+
+	const T m30 = determinant(matrix_t<T, 3, 3>{m(1,0), m(2,0), m(3,0), m(1,1), m(2,1), m(3,1), m(1,2), m(2,2), m(3,2)});
+	const T m31 = determinant(matrix_t<T, 3, 3>{m(0,0), m(2,0), m(3,0), m(0,1), m(2,1), m(3,1), m(0,2), m(2,2), m(3,2)});
+	const T m32 = determinant(matrix_t<T, 3, 3>{m(0,0), m(1,0), m(3,0), m(0,1), m(1,1), m(3,1), m(0,2), m(1,2), m(3,2)});
+	const T m33 = determinant(matrix_t<T, 3, 3>{m(0,0), m(1,0), m(2,0), m(0,1), m(1,1), m(2,1), m(0,2), m(1,2), m(2,2)});
+
+	return {
+		 m00, -m10,  m20, -m30,
+		-m01,  m11, -m21,  m31,
+		 m02, -m12,  m22, -m32,
+		-m03,  m13, -m23,  m33,
+	};
+}
+
+template <typename T, uint32_t N>
+PE_HOST_DEVICE matrix_t<T, N, N> inverse(const matrix_t<T, N, N>& m) {
+  return adjoint(m) / determinant(m);
+}
+
+
+
+
+
+
+
 #undef TVECC
 #undef TVECR
 #undef TMAT
