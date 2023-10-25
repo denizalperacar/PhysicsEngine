@@ -427,7 +427,7 @@ PE_HOST_DEVICE TVEC unit_vector(int direction) {
   Define the unit vectors in 3D space
 */
 #define UNIT_VECTOR_3D(var_type, dir_name, direction) \
-template <typename T, size_t A> \
+template <typename T, size_t A=sizeof(T)> \
 PE_HOST_DEVICE vector_t<T, 3, A> var_type##dir_name() { \
   int dir = direction; \
   vector_t<T, 3, A> result{T(0)}; \

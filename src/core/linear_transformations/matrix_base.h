@@ -43,7 +43,7 @@ struct matrix_t {
     return matrix_t<T, R, C>( (T)0 );
   }
 
-  template <size_t A>
+  template <size_t A=sizeof(T)>
   PE_HOST_DEVICE matrix_t<T, R, C>(const vector_t<T, C, A>& vec) {
     PE_UNROLL
     for (uint32_t i = 0; i < R; i++) {
@@ -53,6 +53,13 @@ struct matrix_t {
 
   template<typename... Ts, typename = enable_if_size_and_type_match_t<R*C, T, Ts...>>
   PE_HOST_DEVICE matrix_t(Ts... coeffs) : data_{ coeffs... } {}
+
+  PE_HOST_DEVICE matrix_t(std::initializer_list<T> coeffs) {
+    PE_UNROLL
+    for (int i = 0; i < R * C; i++) {
+      data_[ i ] = *(coeffs.begin() + i);
+    }
+  }
 
   PE_HOST_DEVICE matrix_t(const T* d) {
     PE_UNROLL
@@ -64,7 +71,7 @@ struct matrix_t {
     }
   }
 
-  template <size_t A>
+  template <size_t A=sizeof(T)>
   PE_HOST_DEVICE matrix_t<T, R, C>(
       const vector_t<T, R, A>& vec1, 
       const vector_t<T, R, A>& vec2 ) {
@@ -73,7 +80,7 @@ struct matrix_t {
     col[ 1 ] = vec2;
   }
 
-    template <size_t A>
+    template <size_t A=sizeof(T)>
   PE_HOST_DEVICE matrix_t<T, R, C>(
       const vector_t<T, R, A>& vec1, 
       const vector_t<T, R, A>& vec2, 
@@ -84,7 +91,7 @@ struct matrix_t {
     col[ 2 ] = vec3;
   }
 
-    template <size_t A>
+    template <size_t A=sizeof(T)>
   PE_HOST_DEVICE matrix_t<T, R, C>(
       const vector_t<T, R, A>& vec1, 
       const vector_t<T, R, A>& vec2,
@@ -220,6 +227,14 @@ ELEMENTWISE_OP(operator+, TMAT, TMAT, b[i] + a[i][j], const TMAT& a, const TVECC
 ELEMENTWISE_OP(operator+, TMAT, TMAT, b[i] + b[i][j], const TVECC& a, const TMAT& b)
 ELEMENTWISE_OP(operator+, TMAT, TMAT, b[j] + a[i][j], const TMAT& a, const TVECR& b)
 ELEMENTWISE_OP(operator+, TMAT, TMAT, b[j] + b[i][j], const TVECR& a, const TMAT& b)
+
+ELEMENTWISE_OP(operator*, TMAT, TMAT, a[i][j] * b[i][j], const TMAT& a, const TMAT& b)
+ELEMENTWISE_OP(operator*, TMAT, TMAT, a * b[i][j], T a, const TMAT& b)
+ELEMENTWISE_OP(operator*, TMAT, TMAT, b * a[i][j], const TMAT& a, T b)
+ELEMENTWISE_OP(operator*, TMAT, TMAT, b[i] * a[i][j], const TMAT& a, const TVECC& b)
+ELEMENTWISE_OP(operator*, TMAT, TMAT, b[i] * b[i][j], const TVECC& a, const TMAT& b)
+ELEMENTWISE_OP(operator*, TMAT, TMAT, b[j] * a[i][j], const TMAT& a, const TVECR& b)
+ELEMENTWISE_OP(operator*, TMAT, TMAT, b[j] * b[i][j], const TVECR& a, const TMAT& b)
 
 ELEMENTWISE_OP(operator/, TMAT, TMAT, a[i][j] / b[i][j], const TMAT& a, const TMAT& b)
 ELEMENTWISE_OP(operator/, TMAT, TMAT, a / b[i][j], T a, const TMAT& b)
@@ -435,7 +450,7 @@ PE_HOST_DEVICE vector_t<T, C> row(const matrix_t<T, R, C>& matrix, int row_index
   return result;
 }
 
-template <typename T, uint32_t R, uint32_t C, size_t A>
+template <typename T, uint32_t R, uint32_t C, size_t A=sizeof(T)>
 PE_HOST_DEVICE matrix_t<T, R, C> replace_row(const matrix_t<T, R, C>& m, int r, const vector_t<T, C, A>& row) {
   matrix_t<T, R, C> result = m;
   PE_UNROLL
@@ -522,7 +537,7 @@ PE_HOST_DEVICE matrix_t<T, N, N> eye() {
 }
 
 
-template <typename T, size_t A>
+template <typename T, size_t A=sizeof(T)>
 PE_HOST_DEVICE matrix_t<T, 3, 3> rotmat(T angle, const vector_t<T, 3, A>& axis) {
   T s = sin(angle);
   T c = cos(angle);
@@ -535,7 +550,7 @@ PE_HOST_DEVICE matrix_t<T, 3, 3> rotmat(T angle, const vector_t<T, 3, A>& axis) 
   };
 } 
 
-template <typename T, size_t A>
+template <typename T, size_t A=sizeof(T)>
 PE_HOST_DEVICE matrix_t<T, 3, 3> rotmat(const vector_t<T, 3, A>& v) {
   T angle = length(v);
   if (angle == 0) {

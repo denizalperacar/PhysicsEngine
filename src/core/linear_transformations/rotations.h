@@ -6,6 +6,20 @@
 
 PE_BEGIN
 
+template <typename T>
+PE_HOST_DEVICE matrix_t<T, 3, 3> rodrigues_formula(const vector_t<T, 3>& n, T angle, bool is_radian = true) {
+    if (!is_radian) {
+        angle = angle * pi / 180.0;
+    }
+    T c = cos(angle);
+    T s = sin(angle);
+    T t = 1 - c;
+    matrix_t<T, 3, 3> I = matrix_t<T, 3, 3>::identity();
+    matrix_t<T, 3, 3> n_nT = outer(n, n);
+    matrix_t<T, 3, 3> n_tilde = skew_symmetric_matrix(n);
+
+    return I * c + n_tilde * s + n_nT * t;
+}
 
 
 PE_END

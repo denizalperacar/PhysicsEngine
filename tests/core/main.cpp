@@ -11,8 +11,9 @@ int main() {
   
   PE::vector_t<double, 4> c(1., 2., 3., 4.);
   PE::vector_t<double, 3> d(4., 5., 6.);
+  PE::matrix_t<double, 3, 3> e = PE::rodrigues_formula(PE::u1<double>(), 90.0, false);
 
-  print(b + c);
+  print(e);
 
   return 0;
 }
