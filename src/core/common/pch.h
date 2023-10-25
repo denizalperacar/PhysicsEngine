@@ -4,6 +4,8 @@
 #include "common.h"
 #include "../linear_transformations/vector_base.h"
 #include "../linear_transformations/matrix_base.h"
+#include "../linear_transformations/rotations.h"
+
 
 
 

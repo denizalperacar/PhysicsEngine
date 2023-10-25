@@ -518,9 +518,198 @@ PE_HOST_DEVICE matrix_t<T, 3, 3> cross_product_matrix(const vector_t<T, 3>& v) {
 
 template <typename T, uint32_t N>
 PE_HOST_DEVICE matrix_t<T, N, N> eye() {
-  return matrix<T, N, N>::identity();
+  return matrix_t<T, N, N>::identity();
 }
 
+
+template <typename T, size_t A>
+PE_HOST_DEVICE matrix_t<T, 3, 3> rotmat(T angle, const vector_t<T, 3, A>& axis) {
+  T s = sin(angle);
+  T c = cos(angle);
+  T oc = (T)1 - c;
+
+  return {
+		oc * axis.x * axis.x + c,          oc * axis.x * axis.y + axis.z * s, oc * axis.z * axis.x - axis.y * s,
+		oc * axis.x * axis.y - axis.z * s, oc * axis.y * axis.y + c,          oc * axis.y * axis.z + axis.x * s,
+		oc * axis.z * axis.x + axis.y * s, oc * axis.y * axis.z - axis.x * s, oc * axis.z * axis.z + c,
+  };
+} 
+
+template <typename T, size_t A>
+PE_HOST_DEVICE matrix_t<T, 3, 3> rotmat(const vector_t<T, 3, A>& v) {
+  T angle = length(v);
+  if (angle == 0) {
+    return matrix_t<T, 3, 3>::identity();
+  }
+  
+  return rotmat(angle, v);
+}
+
+template <typename T, uint32_t N>
+PE_HOST_DEVICE matrix_t<T, N, N> mat_sqrt(const matrix_t<T, N, N>& m, T epsilon = (T)1e-10f) {
+  matrix_t<T, N, N> A = m - matrix_t<T, N, N>::identity();
+  matrix_t<T, N, N> Z = A;
+  matrix_t<T, N, N> X = A;
+
+  for (uint32_t i = 0; i < 32; i++) {
+    if (frobenious_norm(Z) < epsilon) {
+      return X;
+    }
+
+    Z = Z * A;
+    X += ((T)1 / (T)i) * Z;
+  }
+
+  return X;
+}
+
+template <typename T, uint32_t N>
+PE_HOST_DEVICE matrix_t<T, N, N> mat_exp_pade(const matrix_t<T, N, N>& m) {
+	// Pade approximation with scaling; same as Matlab.
+	// Pseudocode translated from Hawkins and Grimm [2007]
+	matrix_t<T, N, N> mX = matrix_t<T, N, N>::identity();
+  matrix_t<T, N, N> mD = matrix_t<T, N, N>::identity();
+  matrix_t<T, N, N> mN = matrix_t<T, N, N>::identity();
+
+	T c = (T)1;
+	constexpr uint32_t q = 6; // Matlab's default when using this algorithm
+
+	T s = -(T)1;
+	for (uint32_t k = 1; k <= q; ++k) {
+		c = c * (q - k + 1) / (k * (2 * q - k + 1));
+		mX = m * mX;
+		auto cmX = c * mX;
+		mN = mN + cmX;
+		mD = mD + s * cmX;
+		s = -s;
+	}
+
+	return inverse(mD) * mN;
+}
+
+template <typename T, uint32_t N>
+PE_HOST_DEVICE matrix_t<T, N, N> mat_log(const matrix_t<T, N, N>& m) {
+	matrix_t<T, N, N> result(m);
+
+	uint32_t j = 0;
+	for (; j < 32; ++j) {
+		if (frobenius_norm(result - matrix_t<T, N, N>::identity()) < (T)1e-5f) {
+			break;
+		}
+
+		result = mat_sqrt(result);
+	}
+
+	result = mat_log_hawkins(result);
+	return (T)scalbnf(1.0f, j) * result;
+}
+
+template <typename T, uint32_t N>
+PE_HOST_DEVICE matrix_t<T, N, N> mat_exp(const matrix_t<T, N, N>& m) {
+	uint32_t N_SQUARING = max(0, 1 + (int)floor(log2(frobenius_norm(m))));
+
+	matrix_t<T, N, N> result = (T)scalbnf(1.0f, -N_SQUARING) * m;
+	result = mat_exp_pade(result);
+
+	for (uint32_t i = 0; i < N_SQUARING; ++i) {
+		result *= result;
+	}
+
+	return result;
+}
+
+
+template <typename T>
+PE_HOST_DEVICE matrix_t<T, 3, 3> orthogonalize(const matrix_t<T, 3, 3>& m) {
+	return matrix_t<T, 3, 3>{
+		(T)0.5f * ((T)3 - dot(m[0], m[0])) * m[0],
+		(T)0.5f * ((T)3 - dot(m[1], m[1])) * m[1],
+		(T)0.5f * ((T)3 - dot(m[2], m[2])) * m[2],
+	};
+}
+
+template <typename T>
+PE_HOST_DEVICE matrix_t<T, 3, 3> so3_log(const matrix_t<T, 3, 3>& m) {
+	T tr = clamp(m[0][0] + m[1][1] + m[2][2], -(T)1 + std::numeric_limits<T>::epsilon(), (T)1);
+	T radians = acosf((tr - (T)1) / (T)2);
+	return radians / sqrt(((T)1 + tr) * ((T)3 - tr)) * (m - transpose(m));
+}
+
+template <typename T>
+PE_HOST_DEVICE matrix_t<T, 3, 3> so3_exp(const matrix_t<T, 3, 3>& m) {
+	vector_t<T, 3> axis = {-m[2][1], m[2][0], -m[1][0]};
+	T radians_sq = length2(axis);
+	if (radians_sq == (T)0) {
+		return matrix_t<T, 3, 3>::identity();
+	}
+
+	T radians = sqrt(radians_sq);
+	return matrix_t<T, 3, 3>::identity() + (sin(radians) / radians) * m + (((T)1 - cos(radians)) / radians_sq) * (m * m);
+}
+
+template <typename T>
+PE_HOST_DEVICE matrix_t<T, 4, 3> se3_log(const matrix_t<T, 4, 3>& m) {
+	auto omega = so3_log(matrix_t<T, 3, 3>(m));
+	vector_t<T, 3> axis = {-omega[2][1], omega[2][0], -omega[1][0]};
+	T radians_sq = length2(axis);
+	auto inv_trans = matrix_t<T, 3, 3>::identity();
+	if (radians_sq > (T)0) {
+		T radians = sqrt(radians_sq);
+		inv_trans += -(T)0.5 * omega + (((T)1 - (T)0.5 * radians * cos((T)0.5 * radians) / sin((T)0.5 * radians)) / radians_sq) * (omega * omega);
+	}
+
+	return {omega[0], omega[1], omega[2], inv_trans * m[3]};
+}
+
+template <typename T>
+PE_HOST_DEVICE matrix_t<T, 4, 3> se3_exp(const matrix_t<T, 4, 3>& m) {
+	matrix_t<T, 3, 3> omega = m;
+	vector_t<T, 3> axis = {-omega[2][1], omega[2][0], -omega[1][0]};
+	T radians_sq = length2(axis);
+	auto trans = matrix_t<T, 3, 3>::identity();
+	if (radians_sq > (T)0) {
+		T radians = sqrt(radians_sq);
+		trans += (((T)1 - cos(radians)) / radians_sq) * omega + ((radians - sin(radians)) / (radians * radians_sq)) * (omega * omega);
+	}
+
+	auto rot = so3_exp(omega);
+	return {rot[0], rot[1], rot[2], trans * m[3]};
+}
+
+template <typename T>
+PE_HOST_DEVICE matrix_t<T, 4, 4> se3_log(const matrix_t<T, 4, 4>& m) {
+	auto result = matrix_t<T, 4, 4>(se3_log(matrix_t<T, 4, 3>(m)));
+	result[3][3] = (T)0;
+	return result;
+}
+
+template <typename T>
+PE_HOST_DEVICE matrix_t<T, 4, 4> se3_exp(const matrix_t<T, 4, 4>& m) {
+	return matrix_t<T, 4, 4>(se3_exp(matrix_t<T, 4, 3>(m)));
+}
+
+
+#define DEF_NON_TEMPLATED_MATRIX_TYPES(name, T) \
+template <uint32_t R, uint32_t C> \
+using name = matrix_t<T, R, C>; \
+using name##4x4 = name<4, 4>; \
+using name##4x3 = name<4, 3>; \
+using name##4x2 = name<4, 2>; \
+using name##3x4 = name<3, 4>; \
+using name##3x3 = name<3, 3>; \
+using name##3x2 = name<3, 2>; \
+using name##2x4 = name<2, 4>; \
+using name##2x3 = name<2, 3>; \
+using name##2x2 = name<2, 2>; \
+using name##4 = name##4x4; \
+using name##3 = name##3x3; \
+using name##2 = name##2x2;
+
+DEF_NON_TEMPLATED_MATRIX_TYPES(mat, float)
+DEF_NON_TEMPLATED_MATRIX_TYPES(dmat, double)
+#if defined(__CUDACC__)
+DEF_NON_TEMPLATED_MATRIX_TYPES(hmat, __half)
+#endif
 
 #undef TVECC
 #undef TVECR
