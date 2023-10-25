@@ -8,7 +8,7 @@
 PE_BEGIN
 
 // constants
-constexpr float pi = 3.1415926535897932385f;
+constexpr double pi = 3.14159265358979323846;
 
 // Thread constants
 constexpr uint32_t NUM_THREADS_MIN = 32;

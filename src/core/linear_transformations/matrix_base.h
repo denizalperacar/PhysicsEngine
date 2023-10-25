@@ -57,7 +57,7 @@ struct matrix_t {
   PE_HOST_DEVICE matrix_t(std::initializer_list<T> coeffs) {
     PE_UNROLL
     for (int i = 0; i < R * C; i++) {
-      data_[ i ] = *(coeffs.begin() + i);
+      data_[ i ] = (T)*(coeffs.begin() + i);
     }
   }
 
