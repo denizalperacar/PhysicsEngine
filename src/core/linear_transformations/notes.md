@@ -14,4 +14,6 @@
 [X] rotation matrix
 [X] inverse matrix
 [X] roudrigues formula for rotation dyad implementation
-
+[X] implement different sets of euler rotation sequences
+[ ] implement the inverse of transformation matrix i.e. get n and theta (page 24)
+[ ] 
