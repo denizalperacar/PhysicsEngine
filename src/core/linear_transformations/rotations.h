@@ -119,7 +119,7 @@ PE_HOST_DEVICE matrix_t<T, 3, 3> rotation_xyx(T ang1, T ang2, T ang3, bool is_ra
   }
   T s11 = sin(ang1); T s22 = sin(ang2); T s31 = sin(ang3);
   T c11 = cos(ang1); T c22 = cos(ang2); T c31 = cos(ang3);
-  return {c22, s11*s22, -c11*s22, s11*s22, c11**2 - c22*s11**2, c11*c22*s11 + c11*s11, c11*s22, -c11*c22*s11 - c11*s11, c11**2*c22 - s11**2};
+  return {c22, s11*s22, -c11*s22, s11*s22, c11*c11 - c22*s11*c11, c11*c22*s11 + c11*s11, c11*s22, -c11*c22*s11 - c11*s11, c11*c11*c22 - s11*c11};
 }
 
 // r1_2_3 = 
@@ -145,7 +145,7 @@ PE_HOST_DEVICE matrix_t<T, 3, 3> rotation_xzx(T ang1, T ang2, T ang3, bool is_ra
   }
   T s11 = sin(ang1); T s23 = sin(ang2); T s31 = sin(ang3);
   T c11 = cos(ang1); T c23 = cos(ang2); T c31 = cos(ang3);
-  return {c31, c11*s31, s11*s31, -c11*s31, c11**2*c31 - s11**2, c11*c31*s11 + c11*s11, s11*s31, -c11*c31*s11 - c11*s11, c11**2 - c31*s11**2};
+  return {c31, c11*s31, s11*s31, -c11*s31, c11*c11*c31 - s11*c11, c11*c31*s11 + c11*s11, s11*s31, -c11*c31*s11 - c11*s11, c11*c11 - c31*s11*c11};
 }
 
 // r1_3_2 = 
@@ -171,7 +171,7 @@ PE_HOST_DEVICE matrix_t<T, 3, 3> rotation_yxy(T ang1, T ang2, T ang3, bool is_ra
   }
   T s12 = sin(ang1); T s21 = sin(ang2); T s32 = sin(ang3);
   T c12 = cos(ang1); T c21 = cos(ang2); T c32 = cos(ang3);
-  return {-c12*s21**2 + c21**2, s12*s21, -c12*c21*s21 - c21*s21, s12*s21, c12, c21*s12, c12*c21*s21 + c21*s21, -c21*s12, c12*c21**2 - s21**2};
+  return {-c12*s21*s21 + c21*s21, s12*s21, -c12*c21*s21 - c21*s21, s12*s21, c12, c21*s12, c12*c21*s21 + c21*s21, -c21*s12, c12*c21*s21 - s21*s21};
 }
 
 // r2_1_3 = 
@@ -210,7 +210,7 @@ PE_HOST_DEVICE matrix_t<T, 3, 3> rotation_yzy(T ang1, T ang2, T ang3, bool is_ra
   }
   T s12 = sin(ang1); T s23 = sin(ang2); T s32 = sin(ang3);
   T c12 = cos(ang1); T c23 = cos(ang2); T c32 = cos(ang3);
-  return {c23**2*c32 - s23**2, c23*s32, -c23*c32*s23 - c23*s23, -c23*s32, c32, s23*s32, c23*c32*s23 + c23*s23, s23*s32, c23**2 - c32*s23**2};
+  return {c23*c23*c32 - s23*c23, c23*s32, -c23*c32*s23 - c23*s23, -c23*s32, c32, s23*s32, c23*c32*s23 + c23*s23, s23*s32, c23*c23 - c32*s23*c23};
 }
 
 // r3_1_2 = 
@@ -236,7 +236,7 @@ PE_HOST_DEVICE matrix_t<T, 3, 3> rotation_zxz(T ang1, T ang2, T ang3, bool is_ra
   }
   T s13 = sin(ang1); T s21 = sin(ang2); T s33 = sin(ang3);
   T c13 = cos(ang1); T c21 = cos(ang2); T c33 = cos(ang3);
-  return {-c13*s33**2 + c33**2, c13*c33*s33 + c33*s33, s13*s33, -c13*c33*s33 - c33*s33, c13*c33**2 - s33**2, c33*s13, s13*s33, -c33*s13, c13};
+  return {-c13*s33*s33 + c33*s33, c13*c33*s33 + c33*s33, s13*s33, -c13*c33*s33 - c33*s33, c13*c33*s33 - s33*s33, c33*s13, s13*s33, -c33*s13, c13};
 }
 
 // r3_2_1 = 
@@ -262,7 +262,7 @@ PE_HOST_DEVICE matrix_t<T, 3, 3> rotation_zyz(T ang1, T ang2, T ang3, bool is_ra
   }
   T s13 = sin(ang1); T s22 = sin(ang2); T s33 = sin(ang3);
   T c13 = cos(ang1); T c22 = cos(ang2); T c33 = cos(ang3);
-  return {c22*c33**2 - s33**2, c22*c33*s33 + c33*s33, -c33*s22, -c22*c33*s33 - c33*s33, -c22*s33**2 + c33**2, s22*s33, c33*s22, s22*s33, c22};
+  return {c22*c33*c33 - s33*s33, c22*c33*s33 + c33*s33, -c33*s22, -c22*c33*s33 - c33*s33, -c22*s33*s33 + c33*s33, s22*s33, c33*s22, s22*s33, c22};
 }
 
 
