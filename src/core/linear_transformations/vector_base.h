@@ -179,6 +179,7 @@ public:
 template <typename T> PE_HOST_DEVICE T min(T a, T b) { return std::min(a, b); }
 template <typename T> PE_HOST_DEVICE T max(T a, T b) { return std::max(a, b); }
 template <typename T> PE_HOST_DEVICE T pow(T a, T b) { return std::pow(a, b); }
+template <typename T> PE_HOST_DEVICE T atan2(T a, T b) { return std::atan2(a, b); }
 template <typename T> PE_HOST_DEVICE T distance(T a, T b) { return std::abs(a - b); }
 template <typename T> PE_HOST_DEVICE T copysign(T a, T b) { return std::copysign(a, b); }
 template <typename T> PE_HOST_DEVICE T sign(T a) { return std::copysign((T)1, a); }
@@ -247,6 +248,10 @@ ELEMENTWISE_OP(operator/, TVEC, a[ind] / b, const TVEC &a, T b)
 ELEMENTWISE_OP(min, TVEC, min(a[ind], b[ind]), const TVEC& a, const TVEC& b)
 ELEMENTWISE_OP(min, TVEC, min(a[ind], b), const TVEC& a, T b)
 ELEMENTWISE_OP(min, TVEC, min(a, b[ind]), T a, const TVEC& b)
+
+ELEMENTWISE_OP(atan2, TVEC, atan2(a[ind], b[ind]), const TVEC& a, const TVEC& b)
+ELEMENTWISE_OP(atan2, TVEC, atan2(a[ind], b), const TVEC& a, T b)
+ELEMENTWISE_OP(atan2, TVEC, atan2(a, b[ind]), T a, const TVEC& b)
 
 ELEMENTWISE_OP(max, TVEC, max(a[ind], b[ind]), const TVEC& a, const TVEC& b)
 ELEMENTWISE_OP(max, TVEC, max(a[ind], b), const TVEC& a, T b)

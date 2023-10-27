@@ -13,7 +13,7 @@ int main() {
   PE::vector_t<double, 3> u1(4., 5., 6.);
   PE::matrix_t<double, 3, 3> e = PE::rodrigues_formula(PE::u1<double>(), 90.0, false);
 
-  PE::matrix_t<double, 3, 3> f = PE::rotation_xyz(90.0, 30.0, 60.0, false);
+  PE::matrix_t<double, 3, 3> f = PE::rotation_zyx(90.0, 30.0, -530.0, false);
 
   PE::print(f);
 
