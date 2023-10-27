@@ -107,6 +107,7 @@ struct quat_t {
   }
 
   PE_HOST_DEVICE vector_t<T, 4> to_axisangle() {
+    // implemented from http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
     // Assuming the quaternion is normalized.
     if (quat.w > 1) normalise(quat);
     vector_t<T, 4> aa;

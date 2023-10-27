@@ -6,6 +6,8 @@
 #include "../linear_transformations/matrix_base.h"
 #include "../linear_transformations/rotation_dyads.h"
 #include "../linear_transformations/quaternion.h"
+#include "../linear_transformations/homogeneous_transformation_matrix.h"
+
 
 
 
