@@ -15,5 +15,8 @@
 [X] inverse matrix
 [X] roudrigues formula for rotation dyad implementation
 [X] implement different sets of euler rotation sequences
+[X] implement quaternions
+[ ] implement hemogenious transformation matrices
+[ ] implement matrix slice accessors
 [ ] implement the inverse of transformation matrix i.e. get n and theta (page 24)
 [ ] 
