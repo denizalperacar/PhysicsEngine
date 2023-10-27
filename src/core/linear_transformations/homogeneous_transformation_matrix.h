@@ -7,27 +7,27 @@
 PE_BEGIN
 
 #define PE_HTM_FROM_ROT1(dir, name) \
-PE_HOST_DEVICE void set_dcm_from_##name##_rotation(T ang1) { \
-  return set_dcm(set_dcm_from_##name##_rotation(ang1)); \
+PE_HOST_DEVICE void set_dcm_from_euler_##name##_rotation(T ang1) { \
+  return set_dcm(set_dcm_from_euler_##name##_rotation(ang1)); \
 } \
-PE_HOST_DEVICE void set_dcm_from_##dir##_rotation(T ang1) { \
-  return set_dcm(set_dcm_from_##name##_rotation(ang1)); \
+PE_HOST_DEVICE void set_dcm_from_euler_##dir##_rotation(T ang1) { \
+  return set_dcm(set_dcm_from_euler_##name##_rotation(ang1)); \
 }
 
 #define PE_HTM_FROM_ROT2(dir, name) \
-PE_HOST_DEVICE void set_dcm_from_##name##_rotation(T ang1, T ang2) { \
-  return set_dcm(set_dcm_from_##name##_rotation(ang1, ang2)); \
+PE_HOST_DEVICE void set_dcm_from_euler_##name##_rotation(T ang1, T ang2) { \
+  return set_dcm(set_dcm_from_euler_##name##_rotation(ang1, ang2)); \
 } \
-PE_HOST_DEVICE void set_dcm_from_##dir##_rotation(T ang1, T ang2) { \
-  return set_dcm(set_dcm_from_##name##_rotation(ang1, ang2)); \
+PE_HOST_DEVICE void set_dcm_from_euler_##dir##_rotation(T ang1, T ang2) { \
+  return set_dcm(set_dcm_from_euler_##name##_rotation(ang1, ang2)); \
 }
 
 #define PE_HTM_FROM_ROT3(dir, name) \
-PE_HOST_DEVICE void set_dcm_from_##name##_rotation(T ang1, T ang2, T ang3) { \
-  return set_dcm(set_dcm_from_##name##_rotation(ang1, ang2, ang3)); \
+PE_HOST_DEVICE void set_dcm_from_euler_##name##_rotation(T ang1, T ang2, T ang3) { \
+  return set_dcm(set_dcm_from_euler_##name##_rotation(ang1, ang2, ang3)); \
 } \
-PE_HOST_DEVICE void set_dcm_from_##dir##_rotation(T ang1, T ang2, T ang3) { \
-  return set_dcm(set_dcm_from_##name##_rotation(ang1, ang2, ang3)); \
+PE_HOST_DEVICE void set_dcm_from_euler_##dir##_rotation(T ang1, T ang2, T ang3) { \
+  return set_dcm(set_dcm_from_euler_##name##_rotation(ang1, ang2, ang3)); \
 }
 
 #define PE_HTM_FROM_ROT() \
@@ -84,6 +84,35 @@ struct htm_t {
 
   PE_HOST_DEVICE htm_t(const quaternion_t<T>& q) {
     set_quaternion(q);
+  }
+
+  PE_HOST htm_t(const std::vector<htm_t<T>>& rhtm) {
+    matrix = rhtm[0].matrix;
+    for (int i = 1; i < rhtm.size(); ++i) {
+      matrix = matrix * rhtm[i].matrix;
+    }
+  }
+
+  PE_HOST_DEVICE htm_t<T> operator*(const htm_t<T>& rhs) const {
+    return htm_t<T>(matrix * rhs.matrix);
+  }
+
+  PE_HOST_DEVICE htm_t<T> get_inverse() const {
+    matrix_t<T, 3, 3> dcm = get_dcm();
+    // invert dcm
+    dcm = dcm.transpose();
+    // invert position
+    vector_t<T, 3> position = -dcm * get_position();
+    return htm_t<T>(dcm, position);
+  }
+
+  PE_HOST_DEVICE void invert() {
+    matrix_t<T, 3, 3> dcm = get_dcm();
+    // invert dcm
+    dcm = dcm.transpose();
+    // invert position
+    vector_t<T, 3> position = -dcm * get_position();
+    from_pdcm(dcm, position);
   }
 
   // get the dcm from the htm
@@ -170,65 +199,65 @@ struct htm_t {
 
 #define PE_HTM_FROM_ROT1(dir, name) \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_##name##_rotation(T ang1) { \
-  return htm_t<T>(from_##name##_rotation(ang1)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##name##_rotation(T ang1) { \
+  return htm_t<T>(from_euler_##name##_rotation(ang1)); \
 } \
 \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_##dir##_rotation(T ang1) { \
-  return htm_t<T>(from_##name##_rotation(ang1)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##dir##_rotation(T ang1) { \
+  return htm_t<T>(from_euler_##name##_rotation(ang1)); \
 } \
 \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_##name##_rotation(T ang1, const vector_t<T, 3>& position) { \
-  return htm_t<T>(from_##name##_rotation(ang1), position); \
+PE_HOST_DEVICE htm_t<T> from_euler_##name##_rotation(T ang1, const vector_t<T, 3>& position) { \
+  return htm_t<T>(from_euler_##name##_rotation(ang1), position); \
 } \
 \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_##dir##_rotation(T ang1, const vector_t<T, 3>& position) { \
-  return htm_t<T>(from_##name##_rotation(ang1, position)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##dir##_rotation(T ang1, const vector_t<T, 3>& position) { \
+  return htm_t<T>(from_euler_##name##_rotation(ang1, position)); \
 }
 
 #define PE_HTM_FROM_ROT2(dir, name) \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_##name##_rotation(T ang1, T ang2) { \
-  return htm_t<T>(from_##name##_rotation(ang1, ang2)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##name##_rotation(T ang1, T ang2) { \
+  return htm_t<T>(from_euler_##name##_rotation(ang1, ang2)); \
 } \
 \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_##dir##_rotation(T ang1, T ang2) { \
-  return htm_t<T>(from_##name##_rotation(ang1, ang2)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##dir##_rotation(T ang1, T ang2) { \
+  return htm_t<T>(from_euler_##name##_rotation(ang1, ang2)); \
 } \
 \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_##name##_rotation(T ang1, T ang2, const vector_t<T, 3>& position) { \
-  return htm_t<T>(from_##name##_rotation(ang1, ang2, position)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##name##_rotation(T ang1, T ang2, const vector_t<T, 3>& position) { \
+  return htm_t<T>(from_euler_##name##_rotation(ang1, ang2, position)); \
 } \
 \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_##dir##_rotation(T ang1, T ang2, const vector_t<T, 3>& position) { \
-  return htm_t<T>(from_##name##_rotation(ang1, ang2, position)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##dir##_rotation(T ang1, T ang2, const vector_t<T, 3>& position) { \
+  return htm_t<T>(from_euler_##name##_rotation(ang1, ang2, position)); \
 } \
 
 #define PE_HTM_FROM_ROT3(dir, name) \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_##name##_rotation(T ang1, T ang2, T ang3) { \
-  return htm_t<T>(from_##name##_rotation(ang1, ang2, ang3)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##name##_rotation(T ang1, T ang2, T ang3) { \
+  return htm_t<T>(from_euler_##name##_rotation(ang1, ang2, ang3)); \
 } \
 \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_##dir##_rotation(T ang1, T ang2, T ang3) { \
-  return htm_t<T>(from_##name##_rotation(ang1, ang2, ang3)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##dir##_rotation(T ang1, T ang2, T ang3) { \
+  return htm_t<T>(from_euler_##name##_rotation(ang1, ang2, ang3)); \
 } \
 \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_##name##_rotation(T ang1, T ang2, T ang3, const vector_t<T, 3>& position) { \
-  return htm_t<T>(from_##name##_rotation(ang1, ang2, ang3, position)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##name##_rotation(T ang1, T ang2, T ang3, const vector_t<T, 3>& position) { \
+  return htm_t<T>(from_euler_##name##_rotation(ang1, ang2, ang3, position)); \
 } \
 \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_##dir##_rotation(T ang1, T ang2, T ang3, const vector_t<T, 3>& position) { \
-  return htm_t<T>(from_##name##_rotation(ang1, ang2, ang3, position)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##dir##_rotation(T ang1, T ang2, T ang3, const vector_t<T, 3>& position) { \
+  return htm_t<T>(from_euler_##name##_rotation(ang1, ang2, ang3, position)); \
 } \
 
 PE_HTM_FROM_ROT()
