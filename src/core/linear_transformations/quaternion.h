@@ -7,17 +7,17 @@
 PE_BEGIN
 
 template <typename T>
-struct quat_t {
+struct quaternion_t {
 
-  quat_t() = default;
-  PE_HOST_DEVICE quat_t(T w, T x, T y, T z) {
+  quaternion_t() = default;
+  PE_HOST_DEVICE quaternion_t(T w, T x, T y, T z) {
     quat.w = w;
     quat.x = x; 
     quat.y = y;
     quat.z = z;
   }
 
-  PE_HOST_DEVICE quat_t(const matrix_t<T, 3, 3>& m) {
+  PE_HOST_DEVICE quaternion_t(const matrix_t<T, 3, 3>& m) {
     // implemented from http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
     T tr = m(0, 0) + m(1, 1) + m(2, 2);
 
@@ -48,7 +48,7 @@ struct quat_t {
     }
   }
 
-  PE_HOST_DEVICE quat_t(const matrix_t<T, 4, 4>& m) {
+  PE_HOST_DEVICE quaternion_t(const matrix_t<T, 4, 4>& m) {
     // implemented from http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
     T tr = m(0, 0) + m(1, 1) + m(2, 2);
 
@@ -79,7 +79,7 @@ struct quat_t {
     }
   }
 
-  PE_HOST_DEVICE quat_t(T heading, T attitude, T bank) {
+  PE_HOST_DEVICE quaternion_t(T heading, T attitude, T bank) {
     // implemented from http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
     // Assuming the angles are in radians.
     T c1 = cos(heading);
@@ -95,7 +95,7 @@ struct quat_t {
     quat.z = (-s1 * s3 + c1 * s2 * c3 +s2) / w4 ;
   }
 
-  PE_HOST_DEVICE quat_t(const vector_t<T, 3>& n, T angle) {
+  PE_HOST_DEVICE quaternion_t(const vector_t<T, 3>& n, T angle) {
     // implemented from http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
     // Assuming the axis is already normalized.
     T halfAngle = angle / 2.0;
@@ -130,7 +130,7 @@ struct quat_t {
   PE_HOST_DEVICE vector_t<T, 3> to_euler() {
     // implemented from http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToEuler/index.htm
     // Assuming the quaternion is normalized.
-    quat_t q1 = normalize(quat);
+    quaternion_t q1 = normalize(quat);
     T test = q1.x*q1.y + q1.z*q1.w;
     T heading, attitude, bank;
     if (test > 0.499) { // singularity at north pole
