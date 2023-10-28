@@ -97,6 +97,7 @@ struct htm_t {
     return htm_t<T>(matrix * rhs.matrix);
   }
 
+  // returns the inverted form of the htm.
   PE_HOST_DEVICE htm_t<T> get_inverse() const {
     matrix_t<T, 3, 3> dcm = get_dcm();
     // invert dcm
@@ -106,6 +107,7 @@ struct htm_t {
     return htm_t<T>(dcm, position);
   }
 
+  // an inplace operation
   PE_HOST_DEVICE void invert() {
     matrix_t<T, 3, 3> dcm = get_dcm();
     // invert dcm
@@ -113,36 +115,6 @@ struct htm_t {
     // invert position
     vector_t<T, 3> position = -dcm * get_position();
     from_pdcm(dcm, position);
-  }
-
-  // get the dcm from the htm
-  PE_HOST_DEVICE matrix_t<T, 3, 3> get_dcm() const {
-    matrix_t<T, 3, 3> dcm;
-    PE_UNROLL
-    for (int i = 0; i < 3; ++i) {
-      PE_UNROLL
-      for (int j = 0; j < 3; ++j) {
-        dcm[i][j] = matrix[i][j];
-      }
-    }
-    return dcm;
-  }
-
-  PE_HOST_DEVICE vector_t<T, 3> get_position() const {
-    vector_t<T, 3> position;
-    PE_UNROLL
-    for (int i = 0; i < 3; ++i) {
-      position[i] = matrix[i][3];
-    }
-    return position;
-  }
-
-  PE_HOST_DEVICE quaternion_t<T> get_quaternion() const {
-    return quaternion_t<T>(get_dcm());
-  }
-
-  PE_HOST_DEVICE matrix_t<T, 4, 4> get_htm() const {
-    return matrix;
   }
 
   PE_HOST_DEVICE void set_dcm(const matrix_t<T, 3, 3>& dcm) {
@@ -184,11 +156,118 @@ struct htm_t {
     matrix = matrix_t<T, 4, 4>::identity();
   }
 
+  // get the dcm from the htm
+  PE_HOST_DEVICE matrix_t<T, 3, 3> get_dcm() const {
+    matrix_t<T, 3, 3> dcm;
+    PE_UNROLL
+    for (int i = 0; i < 3; ++i) {
+      PE_UNROLL
+      for (int j = 0; j < 3; ++j) {
+        dcm[i][j] = matrix[i][j];
+      }
+    }
+    return dcm;
+  }
+
+  PE_HOST_DEVICE vector_t<T, 3> get_position() const {
+    vector_t<T, 3> position;
+    PE_UNROLL
+    for (int i = 0; i < 3; ++i) {
+      position[i] = matrix[i][3];
+    }
+    return position;
+  }
+
+  PE_HOST_DEVICE quaternion_t<T> get_quaternion() const {
+    return quaternion_t<T>(get_dcm());
+  }
+
+  PE_HOST_DEVICE matrix_t<T, 4, 4> get_htm() const {
+    return matrix;
+  }
+
+  PE_HOST_DEVICE vector_t<T, 4> get_angle_axis() const {
+    // Implementation from http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToAngle/index.htm
+    vector_t<T, 4> result;
+    T angle, x, y, z; // variables for result
+    T epsilon = (T)0.01; // margin to allow for rounding errors
+    T epsilon2 = (T)0.1; // margin to distinguish between 0 and 180 degrees
+    // optional check that input is pure rotation, 'isRotationMatrix' is defined at:
+    // http://www.euclideanspace.com/maths/algebra/matrix/orthogonal/rotation/
+    if ((abs(matrix[0][1]-matrix[1][0])< epsilon)
+      && (abs(matrix[0][2]-matrix[2][0])< epsilon)
+      && (abs(matrix[1][2]-matrix[2][1])< epsilon)) {
+      // singularity found
+      // first check for identity matrix which must have +1 for all terms
+      //  in leading diagonaland zero in other terms
+      if ((abs(matrix[0][1]+matrix[1][0]) < epsilon2)
+        && (abs(matrix[0][2]+matrix[2][0]) < epsilon2)
+        && (abs(matrix[1][2]+matrix[2][1]) < epsilon2)
+        && (abs(matrix[0][0]+matrix[1][1]+matrix[2][2]-3) < epsilon2)) {
+        // this singularity is identity matrix so angle = 0
+        result = { 0, 1, 0, 0 }; // zero angle, arbitrary axis
+        return result; // zero angle, arbitrary axis
+      }
+      // otherwise this singularity is angle = 180
+      angle = pi;
+      T xx = (matrix[0][0]+1)/2;
+      T yy = (matrix[1][1]+1)/2;
+      T zz = (matrix[2][2]+1)/2;
+      T xy = (matrix[0][1]+matrix[1][0])/4;
+      T xz = (matrix[0][2]+matrix[2][0])/4;
+      T yz = (matrix[1][2]+matrix[2][1])/4;
+      if ((xx > yy) && (xx > zz)) { // matrix[0][0] is the largest diagonal term
+        if (xx< epsilon) {
+          x = 0;
+          y = 0.7071;
+          z = 0.7071;
+        } else {
+          x = sqrt(xx);
+          y = xy/x;
+          z = xz/x;
+        }
+      } else if (yy > zz) { // matrix[1][1] is the largest diagonal term
+        if (yy < epsilon) { 
+          x = 0.7071; 
+          y = 0; 
+          z = 0.7071;
+        } else {
+          y = sqrt(yy);
+          x = xy/y;
+          z = yz/y;
+        }	
+      } else { // matrix[2][2] is the largest diagonal term so base result on this
+        if (zz< epsilon) {
+          x = 0.7071;
+          y = 0.7071;
+          z = 0;
+        } else {
+          z = sqrt(zz);
+          x = xz/z;
+          y = yz/z;
+        }
+      }
+
+      result = { angle, x, y, z }; 
+      return result; // return 180 deg rotation
+	  }
+    // as we have reached here there are no singularities so we can handle normally
+    double s = sqrt((matrix[2][1] - matrix[1][2])*(matrix[2][1] - matrix[1][2])
+      +(matrix[0][2] - matrix[2][0])*(matrix[0][2] - matrix[2][0])
+      +(matrix[1][0] - matrix[0][1])*(matrix[1][0] - matrix[0][1])); // used to normalise
+    if (abs(s) < 0.001) s=1; 
+    // prevent divide by zero, should not happen if matrix is orthogonal and should be
+    // caught by singularity test above, but I've left it in just in case
+    angle = acos(( matrix[0][0] + matrix[1][1] + matrix[2][2] - 1)/2);
+    x = (matrix[2][1] - matrix[1][2])/s;
+    y = (matrix[0][2] - matrix[2][0])/s;
+    z = (matrix[1][0] - matrix[0][1])/s;
+    result = { angle, x, y, z }; 
+    return result;
+  }
+
   matrix_t<T, 4, 4> matrix = matrix_t<T, 4, 4>::identity();
 };
-
-
-
 
 // ----------------------------------------------------------------------------
 

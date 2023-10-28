@@ -27,3 +27,4 @@
 [ ] implement the inverse of transformation matrix i.e. get n and theta (page 24)
 [X] invert transofmation matrices
 [ ] add interface for frame
+[ ] test the matrix to angle axis // the indices might be just the opposite
