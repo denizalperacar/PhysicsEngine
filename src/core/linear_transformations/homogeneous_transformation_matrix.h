@@ -60,6 +60,8 @@ PE_HTM_FROM_ROT3(323, zyz)
 template <typename T>
 struct htm_t {
   
+  using value_type = T;
+
   PE_HTM_FROM_ROT()
 
   PE_HOST_DEVICE htm_t() = default;
@@ -264,6 +266,22 @@ struct htm_t {
     z = (matrix[1][0] - matrix[0][1])/s;
     result = { angle, x, y, z }; 
     return result;
+  }
+
+  PE_HOST_DEVICE void print() const {
+  #if defined(__CUDA_ARCH__)
+    printf("HTM:\n");
+    PE_UNROLL
+    for (int i = 0; i < 4; ++i) {
+      printf("%f %f %f %f\n", matrix[0][i], matrix[1][i], matrix[2][i], matrix[3][i]);
+    }
+  #else 
+    std::cout << "HTM:\n";
+    PE_UNROLL
+    for (int i = 0; i < 4; ++i) {
+      std::cout << matrix[0][i] << " " << matrix[1][i] << " " << matrix[2][i] << " " << matrix[3][i] << "\n";
+    }
+  #endif
   }
 
   matrix_t<T, 4, 4> matrix = matrix_t<T, 4, 4>::identity();

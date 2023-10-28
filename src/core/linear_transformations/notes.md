@@ -28,3 +28,4 @@
 [X] invert transofmation matrices
 [ ] add interface for frame
 [ ] test the matrix to angle axis // the indices might be just the opposite
+[ ] add print method for all the classes in the linear tranformation folder

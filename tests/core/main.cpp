@@ -14,8 +14,8 @@ int main() {
   PE::matrix_t<double, 3, 3> e = PE::rodrigues_formula(PE::u1<double>(), 90.0, false);
 
   PE::matrix_t<double, 3, 3> f = PE::rotation_zyx(90.0, 30.0, -530.0, false);
-
+  PE::quaternion_t<double> q;
   PE::print(f);
-
+  PE::print(q);
   return 0;
 }

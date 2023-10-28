@@ -1,3 +1,9 @@
+/*
+@file: quaternion.h
+@brief: Implementation of quaternions
+@author: Deniz A. Acar
+*/
+
 #ifndef F0CEA5BD_D9AA_4065_B558_58BA5BEA3B2E
 #define F0CEA5BD_D9AA_4065_B558_58BA5BEA3B2E
 
@@ -9,7 +15,11 @@ PE_BEGIN
 template <typename T>
 struct quaternion_t {
 
-  quaternion_t() = default;
+  using value_type = T;
+  PE_HOST_DEVICE quaternion_t() {
+    quat = {0, 0, 0, 1};
+  }
+
   PE_HOST_DEVICE quaternion_t(T w, T x, T y, T z) {
     quat.w = w;
     quat.x = x; 
@@ -186,9 +196,27 @@ struct quaternion_t {
     return m;
   }
 
+  PE_HOST_DEVICE void print() const {
+  #if defined(__CUDA_ARCH__) 
+    printf("w: %f, x: %f, y: %f, z: %f\n", quat.w, quat.x, quat.y, quat.z);
+  #else
+    std::cout << "w: " << quat.w << ", x: " << quat.x << ", y: " << quat.y << ", z: " << quat.z << "\n";
+  #endif
+  }
+
   vector_t<T, 4> quat;
 };
 
+template <typename T>
+PE_HOST_DEVICE void print(const quaternion_t<T>& q) {
+  q.print();
+}
+
+template <typename T>
+PE_HOST_DEVICE inline quaternion_t<T> normalize(const quaternion_t<T>& q) {
+  T norm = sqrt(q.quat.w * q.quat.w + q.quat.x * q.quat.x + q.quat.y * q.quat.y + q.quat.z * q.quat.z);
+  return {q.quat.w / norm, q.quat.x / norm, q.quat.y / norm, q.quat.z / norm};
+}
 
 PE_END
 

@@ -14,6 +14,7 @@ using enable_if_all_vectors_t = std::enable_if_t<sizeof...(Ts) == R && conjuncti
 template <typename T, uint32_t R, uint32_t C>
 struct matrix_t {
 
+  using value_type = T;
   // let default constructor create empty matrix
   matrix_t() = default;
   
@@ -121,7 +122,6 @@ struct matrix_t {
       }
     }
   }
-
 
   // matrix vector multiplication
   PE_HOST_DEVICE vector_t<T, R> operator*(const vector_t<T, C>& vec) const {
