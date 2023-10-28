@@ -4,52 +4,52 @@
 
 ## Linear Transformations
 
-[X] dot product
+- [ ] dot product
 
-[X] cross product, cross product matrix, skew symmetric matrix
+- [x] cross product, cross product matrix, skew symmetric matrix
 
-[X] determinant
+- [x] determinant
 
-[X] outer product of vectors
+- [x] outer product of vectors
 
-[X] sqrt matrix
+- [x] sqrt matrix
 
-[X] matrix exponent
+- [x] matrix exponent
 
-[X] matrix log
+- [x] matrix log
 
-[X] rotation matrix
+- [x] rotation matrix
 
-[X] inverse matrix
+- [x] inverse matrix
 
-[X] roudrigues formula for rotation dyad implementation
+- [x] roudrigues formula for rotation dyad implementation
 
-[X] implement different sets of euler rotation sequences
+- [x] implement different sets of euler rotation sequences
 
-[X] implement quaternions
+- [x] implement quaternions
 
-[ ] implement hemogenious transformation matrices (htm)
+- [ ] implement hemogenious transformation matrices (htm)
 
-[X] implement from euler for htm
+- [x] implement from euler for htm
 
-[ ] htm from n and theta
+- [ ] htm from n and theta
 
-[X] htm from quaternion
+- [x] htm from quaternion
 
-[ ] htm to quaternion
+- [ ] htm to quaternion
 
-[ ] htm to dcm
+- [ ] htm to dcm
 
-[ ] htm to euler
+- [ ] htm to euler
 
-[ ] implement matrix slice accessors
+- [ ] implement matrix slice accessors
 
-[ ] implement the inverse of transformation matrix i.e. get n and theta (page 24)
+- [ ] implement the inverse of transformation matrix i.e. get n and theta (page 24)
 
-[X] invert transofmation matrices
+- [x] invert transofmation matrices
 
-[ ] test the matrix to angle axis // the indices might be just the opposite
+- [ ] test the matrix to angle axis // the indices might be just the opposite
 
-[X] add print method for all the classes in the linear tranformation folder
+- [x] add print method for all the classes in the linear tranformation folder
 
-[ ] add interface for frame
+- [ ] add interface for frame
