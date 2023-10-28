@@ -26,3 +26,4 @@
 [ ] implement matrix slice accessors
 [ ] implement the inverse of transformation matrix i.e. get n and theta (page 24)
 [X] invert transofmation matrices
+[ ] add interface for frame
