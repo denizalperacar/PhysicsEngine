@@ -171,6 +171,14 @@ public:
   template<size_t A> PE_HOST_DEVICE vector_t(vector_t<T, 3, A> a, T b) : x(a.x), y(a.y), z(a.z), w(b) {}
   template<size_t A> PE_HOST_DEVICE vector_t(T a, vector_t<T, 3, A> b) : x(a), y(b.x), z(b.y), w(b.z) {}
   template<size_t A, size_t B> PE_HOST_DEVICE vector_t(vector_t<T, 2, A> a, vector_t<T, 2, B> b) : x(a.x), y(a.y), z(b.x), w(b.y) {}
+  template<size_t A> PE_HOST_DEVICE vector_t(vector_t<T, 3, A>& a) : x(a.x), y(a.y), z(a.z), w((T)0) {}
+  template<size_t A> PE_HOST_DEVICE vector_t<T, 4, ALIGNMENT>& operator=(const vector_t<T, 3, A>& a) {
+    x = a.x;
+    y = a.y;
+    z = a.z;
+    w = (T)0;
+    return *this;
+  }
 };
 
 #undef PE_VECTOR_BASE

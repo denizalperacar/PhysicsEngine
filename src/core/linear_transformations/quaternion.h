@@ -12,7 +12,7 @@
 
 PE_BEGIN
 
-template <typename T>
+template <typename T, uint32_t ALIGNMENT=sizeof(T)>
 struct quaternion_t {
 
   using value_type = T;
@@ -204,7 +204,7 @@ struct quaternion_t {
   #endif
   }
 
-  vector_t<T, 4> quat;
+  vector_t<T, 4, ALIGNMENT> quat;
 };
 
 template <typename T>
