@@ -4,7 +4,7 @@
 
 ## Linear Transformations
 
-- [ ] dot product
+- [X] dot product
 
 - [x] cross product, cross product matrix, skew symmetric matrix
 
@@ -53,3 +53,5 @@
 - [x] add print method for all the classes in the linear tranformation folder
 
 - [ ] add interface for frame
+
+- [ ] add quaternion multiplication
