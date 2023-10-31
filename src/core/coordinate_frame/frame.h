@@ -58,11 +58,12 @@ struct Frame {
 };
 
 template <typename T, uint32_t ALIGNMENT>
-struct RelativeFrame : public Frame<T, ALIGNMENT>{
+struct AbstractRelativeFrame : public Frame<T, ALIGNMENT>{
   using value_type = T;
   PE_HOST_DEVICE virtual Frame<T, ALIGNMENT>* get_parent() const = 0;
   PE_HOST_DEVICE virtual void set_parent(Frame<T, ALIGNMENT>* parent) = 0;
   PE_HOST_DEVICE virtual void set_parent(Frame<T, ALIGNMENT>& parent) = 0;
+  PE_HOST_DEVICE virtual bool operator==(const Frame<T, ALIGNMENT>& frame) = 0;
 };
 
 template <typename T, uint32_t ALIGNMENT>
@@ -71,9 +72,12 @@ struct AbsoluteFrame : public Frame<T, ALIGNMENT>{
 };
 
 template <typename T, uint32_t ALIGNMENT>
-struct ConcreteRelativeFrame : public RelativeFrame<T, ALIGNMENT> {
+struct RelativeFrame : public AbstractRelativeFrame<T, ALIGNMENT> {
 
-  PE_HOST_DEVICE ConcreteRelativeFrame(Frame<T, ALIGNMENT> *parent, const vector_t<T, 3>& position, const quaternion_t<T>& quaternion) {
+  PE_HOST_DEVICE RelativeFrame(
+      Frame<T, ALIGNMENT> *parent, 
+      const vector_t<T, 3>& position, 
+      const quaternion_t<T>& quaternion) {
     this->parent = parent;
     PE_UNROLL
     for (int i = 0; i < 3; i++) {
@@ -165,6 +169,11 @@ struct ConcreteRelativeFrame : public RelativeFrame<T, ALIGNMENT> {
 
   PE_HOST_DEVICE virtual void set_parent(Frame<T, ALIGNMENT>& parent) override {
     this->parent = &parent;
+  }
+
+  // checks if the address of the supported frame is the same as the given frame
+  PE_HOST_DEVICE bool operator==(const Frame<T, ALIGNMENT>& frame) override {
+    return this == &frame;
   }
 
   vector_t<T, 4> position;

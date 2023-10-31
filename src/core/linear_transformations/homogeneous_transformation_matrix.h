@@ -284,6 +284,36 @@ struct htm_t {
   #endif
   }
 
+  template<size_t A>
+  PE_HOST_DEVICE vector_t<T, 3, A> ux() {
+    return vector_t<T, 3, A>(matrix[0][0], matrix[1][0], matrix[2][0]); // return the first row
+  }
+
+  template<size_t A>
+  PE_HOST_DEVICE vector_t<T, 3, A> u1() {
+    return vector_t<T, 3, A>(matrix[0][0], matrix[1][0], matrix[2][0]); // return the first row
+  }
+
+  template<size_t A>
+  PE_HOST_DEVICE vector_t<T, 3, A> uy() {
+    return vector_t<T, 3, A>(matrix[0][1], matrix[1][1], matrix[2][1]); // return the 2nd row
+  }
+
+  template<size_t A>
+  PE_HOST_DEVICE vector_t<T, 3, A> u2() {
+    return vector_t<T, 3, A>(matrix[0][1], matrix[1][1], matrix[2][1]); // return the 2nd row
+  }
+
+  template<size_t A>
+  PE_HOST_DEVICE vector_t<T, 3, A> uz() {
+    return vector_t<T, 3, A>(matrix[0][2], matrix[1][2], matrix[2][2]); // return the 3rd row
+  }
+
+  template<size_t A>
+  PE_HOST_DEVICE vector_t<T, 3, A> u3() {
+    return vector_t<T, 3, A>(matrix[0][2], matrix[1][2], matrix[2][2]); // return the 3rd row
+  }
+
   matrix_t<T, 4, 4> matrix = matrix_t<T, 4, 4>::identity();
 };
 
