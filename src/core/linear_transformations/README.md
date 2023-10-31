@@ -38,6 +38,8 @@
 
 - [ ] htm to quaternion
 
+- [ ] add unit vector return from the matrix
+
 - [ ] htm to dcm
 
 - [ ] htm to euler
