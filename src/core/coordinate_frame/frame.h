@@ -52,9 +52,12 @@ struct Frame {
   PE_HOST_DEVICE virtual void invert() = 0;
   PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> resolve_in_frame(const Frame<T, ALIGNMENT>& frame) const = 0;
   PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> resolve_in_frame(const htm_t<T>& htm) const = 0;
+  PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> resolve_in_frame(const vector_t<T, 3>& vec) const = 0;
+  PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> resolve_in_frame(const vector_t<T, 4>& vec) const = 0;
   PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> operator()(const Frame<T, ALIGNMENT>& frame) const = 0; // resolve in frame
   PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> operator()(const htm_t<T>& htm) const = 0; // resolve in frame
   PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> operator()() const = 0; // resolve in global frame
+  PE_HOST_DEVICE virtual void normalize_dcm() = 0;
 };
 
 template <typename T, uint32_t ALIGNMENT>

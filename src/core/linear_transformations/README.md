@@ -59,3 +59,5 @@
 - [X] add quaternion multiplication
 
 - [X] add quaternion inversion
+
+- [ ] construct dcm from 2 vectors

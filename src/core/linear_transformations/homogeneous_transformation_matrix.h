@@ -24,8 +24,8 @@ Considering a frame B that is relative to the frame A. The r is r_{AB}^{A} and C
 r_{AB}^{A} is a vector from origin of A to origin of B resolved/expressed in A. C^{(A, B)} is
 the DCM that transforms vectors from B to A. 
 
-A point in space observed from frame B is p_{B}^{B}. The position of this point in frame A can be 
-calculated as follows:
+A point in space observed from frame B is p_{B}^{B}. The position of this point in frame 
+A can be calculated as follows:
 
 p_{A}^{A} = C^{(A, B)} * p_{B}^{B} + r_{AB}^{A} (1)
 
@@ -41,8 +41,8 @@ Also if we let p_{B}^{B} = [ x, y, z, 1]^T, then the eqaution (1) can be written
 
   p_{A}^{A} = HTM * p_{B}^{B} (2)
 
-Let us assume that there is a third frame C that A is defined relative to it. Then the position of
-a point in frame C can be calculated as follows:
+Let us assume that there is a third frame C that A is defined relative to it. Then the 
+position of a point in frame C can be calculated as follows:
 
   p_{C}^{C} = HTM_{AC} * p_{A}^{A} = HTM_{AC} * HTM_{AB} * p_{B}^{B} (3)
 
@@ -391,27 +391,27 @@ struct htm_t {
   }
 
   template<size_t A>
-  PE_HOST_DEVICE vector_t<T, 3, A> u1_ab() {
+  PE_HOST_DEVICE vector_t<T, 3, A> u1_ba() {
     return vector_t<T, 3, A>(matrix[0][0], matrix[0][1], matrix[0][2]); // return the first row
   }
 
   template<size_t A>
-  PE_HOST_DEVICE vector_t<T, 3, A> uy_ab() {
+  PE_HOST_DEVICE vector_t<T, 3, A> uy_ba() {
     return vector_t<T, 3, A>(matrix[1][0], matrix[1][1], matrix[1][2]); // return the 2nd row
   }
 
   template<size_t A>
-  PE_HOST_DEVICE vector_t<T, 3, A> u2_ab() {
+  PE_HOST_DEVICE vector_t<T, 3, A> u2_ba() {
     return vector_t<T, 3, A>(matrix[1][0], matrix[1][1], matrix[1][2]); // return the 2nd row
   }
 
   template<size_t A>
-  PE_HOST_DEVICE vector_t<T, 3, A> uz_ab() {
+  PE_HOST_DEVICE vector_t<T, 3, A> uz_ba() {
     return vector_t<T, 3, A>(matrix[2][0], matrix[2][1], matrix[2][2]); // return the 3rd row
   }
 
   template<size_t A>
-  PE_HOST_DEVICE vector_t<T, 3, A> u3_ab() {
+  PE_HOST_DEVICE vector_t<T, 3, A> u3_ba() {
     return vector_t<T, 3, A>(matrix[2][0], matrix[2][1], matrix[2][2]); // return the 3rd row
   }
 
