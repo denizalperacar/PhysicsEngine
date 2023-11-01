@@ -31,3 +31,9 @@ Represnting a frame as a hemogenious transformation matrix is also a good idea a
 ## Moving Frame (MF)
 
 The moving frame contains 
+
+
+## TODO
+- [ ] update the last elemnt of the position to 1
+
+- [ ] represent the relative frame as two htms one local one global
