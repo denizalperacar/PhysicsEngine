@@ -11,15 +11,15 @@ The implementation of this physics engine is influenced by the following librari
 
 - [ ] Implement the linear transformations
 
-> - [ ] implement vector definition
+> - [X] implement vector definition
 
-> - [ ] Implementmatrix definition
+> - [X] Implementmatrix definition
 
-> - [ ] Implement quaternions
+> - [X] Implement quaternions
 
-> - [ ] Implement HTM
+> - [X] Implement HTM
 
-> - [ ] Implement rotation dyads calculations
+> - [X] Implement rotation dyads calculations
 
 > - [ ] Test the code
 
