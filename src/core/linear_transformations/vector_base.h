@@ -434,7 +434,37 @@ PE_HOST_DEVICE TVEC unit_vector(int direction) {
   result[direction] = (T)1;
   return result;
 }
+#if defined(__CUDA_ARCH__)
+  #define PRINTVEC(type, dim, cpu_print, cuda_print) \
+  void print(const vector_t<type, dim>& t) { \
+    cuda_print; \
+  }
+#else 
+  #define PRINTVEC(type, dim, cpu_print, cuda_print) \
+  void print(const vector_t<type, dim>& t) { \
+    cpu_print; \
+  }
+#endif 
 
+
+#define PRINTVEC2(type, frmt) \
+PRINTVEC(type, 1, fmt::print("x: {}\n", t.x), printf("x: frmt\n", t.x))\
+PRINTVEC(type, 2, fmt::print("x: {}, y: {}\n", t.x, t.y), printf("x: frmt y: frmt\n", t.x, t.y))\
+PRINTVEC(type, 3, fmt::print("x: {}, y: {}, z: {}\n", t.x, t.y, t.z), printf("x: frmt y: frmt z: frmt\n", t.x, t.y, t.z))\
+PRINTVEC(type, 4, fmt::print("x: {}, y: {}, z: {}, w: {}\n", t.x, t.y, t.z, t.w), printf("x: frmt y: frmt z: frmt w: frmt\n", t.x, t.y, t.z, t.w))\
+
+PRINTVEC2(float, %f)
+PRINTVEC2(double, %f)
+PRINTVEC2(int, %d)
+PRINTVEC2(uint32_t, %u)
+PRINTVEC2(uint16_t, %u)
+PRINTVEC2(uint64_t, %lu)
+PRINTVEC2(int16_t, %d)
+PRINTVEC2(int64_t, %ld)
+PRINTVEC2(bool, %d)
+
+#undef PRINTVEC
+#undef PRINTVEC2
 
 /*
   Define the unit vectors in 3D space
