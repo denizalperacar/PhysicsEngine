@@ -204,6 +204,37 @@ struct quaternion_t {
   #endif
   }
 
+  template <uint32_t A>
+  PE_HOST_DEVICE quaternion_t<T, A> operator*(const quaternion_t<T, A>& q) const {
+    quaternion_t<T, A> result;
+    result.quat.w = quat.w * q.quat.w - quat.x * q.quat.x - quat.y * q.quat.y - quat.z * q.quat.z;
+    result.quat.x = quat.w * q.quat.x + quat.x * q.quat.w + quat.y * q.quat.z - quat.z * q.quat.y;
+    result.quat.y = quat.w * q.quat.y - quat.x * q.quat.z + quat.y * q.quat.w + quat.z * q.quat.x;
+    result.quat.z = quat.w * q.quat.z + quat.x * q.quat.y - quat.y * q.quat.x + quat.z * q.quat.w;
+    return result;
+  }
+
+  PE_HOST_DEVICE T magnatude() {
+    return sqrt(quat.w * quat.w + quat.x * quat.x + quat.y * quat.y + quat.z * quat.z);
+  }
+
+  PE_HOST_DEVICE quaternion_t<T, ALIGNMENT> inverse() const {
+    T m = magnatude();
+    return {quat.w / m, -quat.x / m, -quat.y / m, -quat.z / m};
+  }
+
+  PE_HOST_DEVICE quaternion_t<T, ALIGNMENT> conjugate() const {
+    return {quat.w, -quat.x, -quat.y, -quat.z};
+  }
+
+  PE_HOST_DEVICE void invert() {
+    T m = magnatude();
+    quat.w /= m;
+    quat.x /= -m;
+    quat.y /= -m;
+    quat.z /= -m;
+  }
+  
   vector_t<T, 4, ALIGNMENT> quat;
 };
 

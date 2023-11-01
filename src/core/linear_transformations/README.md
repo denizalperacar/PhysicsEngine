@@ -36,26 +36,26 @@
 
 - [x] htm from quaternion
 
-- [ ] htm to quaternion
+- [X] htm to quaternion
 
-- [ ] add unit vector return from the matrix
+- [X] add unit vector return from the matrix
 
-- [ ] htm to dcm
+- [X] htm to dcm
 
-- [ ] add vector resolution to htm 
+- [X] add vector resolution to htm
 
-- [ ] htm to euler
+- [X] htm to euler
 
 - [ ] implement matrix slice accessors
 
-- [ ] implement the inverse of transformation matrix i.e. get n and theta (page 24)
+- [X] implement the inverse of transformation matrix i.e. get n and theta (page 24)
 
-- [x] invert transofmation matrices
+- [X] invert transofmation matrices
 
 - [ ] test the matrix to angle axis // the indices might be just the opposite
 
-- [x] add print method for all the classes in the linear tranformation folder
+- [X] add print method for all the classes in the linear tranformation folder
 
-- [ ] add interface for frame
+- [X] add quaternion multiplication
 
-- [ ] add quaternion multiplication
+- [X] add quaternion inversion
