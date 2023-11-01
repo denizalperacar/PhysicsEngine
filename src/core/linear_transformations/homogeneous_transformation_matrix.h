@@ -4,6 +4,51 @@
 #include "../common/common.h"
 #include "rotation_dyads.h"
 
+/*
+@brief: This file contains the implementation of the homogeneous transformation matrix.
+@author: Deniz A. Acar
+
+The homogeneous transformation matrix (HTM) is a 4x4 matrix that is used to represent
+the position and orientation of a reference frame with respect to another reference frame.
+The HTM is a combination of a rotation matrix and a translation vector. The HTM is used
+to transform vectors from one reference frame to another. The HTM is also used to
+transform the position of a point from one reference frame to another. 
+It is composed in the following way:
+[
+  [ C, r ]
+  [ 0, 1 ]
+]
+Here C is a direction cosine matrix (DCM) and r is a position vector. 
+
+Considering a frame B that is relative to the frame A. The r is r_{AB}^{A} and C is C^{(A, B)}.
+r_{AB}^{A} is a vector from origin of A to origin of B resolved/expressed in A. C^{(A, B)} is
+the DCM that transforms vectors from B to A. 
+
+A point in space observed from frame B is p_{B}^{B}. The position of this point in frame A can be 
+calculated as follows:
+
+p_{A}^{A} = C^{(A, B)} * p_{B}^{B} + r_{AB}^{A} (1)
+
+let C = C^{(A, B)} and r = r_{AB}^{A}. Then the above equation can be written as follows:
+HTM = [
+        [ C11, C12, C13, r1 ]
+        [ C21, C22, C23, r2 ]
+        [ C31, C32, C33, r3 ]
+        [ 0,   0,   0,   1  ]
+      ]
+
+Also if we let p_{B}^{B} = [ x, y, z, 1]^T, then the eqaution (1) can be written as follows:
+
+  p_{A}^{A} = HTM * p_{B}^{B} (2)
+
+Let us assume that there is a third frame C that A is defined relative to it. Then the position of
+a point in frame C can be calculated as follows:
+
+  p_{C}^{C} = HTM_{AC} * p_{A}^{A} = HTM_{AC} * HTM_{AB} * p_{B}^{B} (3)
+
+*/
+
+
 PE_BEGIN
 
 #define PE_HTM_FROM_ROT1(dir, name) \
@@ -88,10 +133,21 @@ struct htm_t {
     set_quaternion(q);
   }
 
+  /*
+  Assume that the std::vector<htm_t<T>> contains the htm's 
+  that transform a point from frame A to B, stored in the 
+  order form grandparents to parents:
+    A -> B -> C -> D
+  Here we want to find the htm that transforms a point from
+  frame A to D. This is done by multiplying the htm's in the
+  reverse order:
+    A -> B -> C -> D = (A -> B) * (B -> C) * (C -> D)
+  */
   PE_HOST htm_t(const std::vector<htm_t<T>>& rhtm) {
-    matrix = rhtm[0].matrix;
-    for (int i = 1; i < rhtm.size(); ++i) {
-      matrix = matrix * rhtm[i].matrix;
+    size_t s = rhtm.size();
+    matrix = rhtm[s - 1].matrix;
+    for (int i = s - 2; i >= 0; --i) {
+      matrix = rhtm[i].matrix * matrix;
     }
   }
 
@@ -268,6 +324,18 @@ struct htm_t {
     return result;
   }
 
+  template<size_t A>
+  PE_HOST_DEVICE vector_t<T, 4, A> transform_to_parent(const vector_t<T, 4, A>& v) const {
+    return matrix * v;
+  }
+
+  template<size_t A>
+  PE_HOST_DEVICE vector_t<T, 3, A> transform_to_parent(const vector_t<T, 3, A>& v) const {
+    vector_t<T, 4, A> v4(v[0], v[1], v[2], 1);
+    vector_t<T, 4, A> result = matrix * v4;
+    return {result[0], result[1], result[2]};
+  }  
+
   PE_HOST_DEVICE void print() const {
   #if defined(__CUDA_ARCH__)
     printf("HTM:\n");
@@ -284,35 +352,69 @@ struct htm_t {
   #endif
   }
 
+  /*
+  @brief: returns the x-axis of the htm resolved in its parents frame i.e [u1]^{A/B}
+  */
   template<size_t A>
-  PE_HOST_DEVICE vector_t<T, 3, A> ux() {
+  PE_HOST_DEVICE vector_t<T, 3, A> ux_ab() {
     return vector_t<T, 3, A>(matrix[0][0], matrix[1][0], matrix[2][0]); // return the first row
   }
 
   template<size_t A>
-  PE_HOST_DEVICE vector_t<T, 3, A> u1() {
+  PE_HOST_DEVICE vector_t<T, 3, A> u1_ab() {
     return vector_t<T, 3, A>(matrix[0][0], matrix[1][0], matrix[2][0]); // return the first row
   }
 
   template<size_t A>
-  PE_HOST_DEVICE vector_t<T, 3, A> uy() {
+  PE_HOST_DEVICE vector_t<T, 3, A> uy_ab() {
     return vector_t<T, 3, A>(matrix[0][1], matrix[1][1], matrix[2][1]); // return the 2nd row
   }
 
   template<size_t A>
-  PE_HOST_DEVICE vector_t<T, 3, A> u2() {
+  PE_HOST_DEVICE vector_t<T, 3, A> u2_ab() {
     return vector_t<T, 3, A>(matrix[0][1], matrix[1][1], matrix[2][1]); // return the 2nd row
   }
 
   template<size_t A>
-  PE_HOST_DEVICE vector_t<T, 3, A> uz() {
+  PE_HOST_DEVICE vector_t<T, 3, A> uz_ab() {
     return vector_t<T, 3, A>(matrix[0][2], matrix[1][2], matrix[2][2]); // return the 3rd row
   }
 
   template<size_t A>
-  PE_HOST_DEVICE vector_t<T, 3, A> u3() {
+  PE_HOST_DEVICE vector_t<T, 3, A> u3_ab() {
     return vector_t<T, 3, A>(matrix[0][2], matrix[1][2], matrix[2][2]); // return the 3rd row
   }
+
+  template<size_t A>
+  PE_HOST_DEVICE vector_t<T, 3, A> ux_ba() {
+    return vector_t<T, 3, A>(matrix[0][0], matrix[0][1], matrix[0][2]); // return the first col
+  }
+
+  template<size_t A>
+  PE_HOST_DEVICE vector_t<T, 3, A> u1_ab() {
+    return vector_t<T, 3, A>(matrix[0][0], matrix[0][1], matrix[0][2]); // return the first row
+  }
+
+  template<size_t A>
+  PE_HOST_DEVICE vector_t<T, 3, A> uy_ab() {
+    return vector_t<T, 3, A>(matrix[1][0], matrix[1][1], matrix[1][2]); // return the 2nd row
+  }
+
+  template<size_t A>
+  PE_HOST_DEVICE vector_t<T, 3, A> u2_ab() {
+    return vector_t<T, 3, A>(matrix[1][0], matrix[1][1], matrix[1][2]); // return the 2nd row
+  }
+
+  template<size_t A>
+  PE_HOST_DEVICE vector_t<T, 3, A> uz_ab() {
+    return vector_t<T, 3, A>(matrix[2][0], matrix[2][1], matrix[2][2]); // return the 3rd row
+  }
+
+  template<size_t A>
+  PE_HOST_DEVICE vector_t<T, 3, A> u3_ab() {
+    return vector_t<T, 3, A>(matrix[2][0], matrix[2][1], matrix[2][2]); // return the 3rd row
+  }
+
 
   matrix_t<T, 4, 4> matrix = matrix_t<T, 4, 4>::identity();
 };
