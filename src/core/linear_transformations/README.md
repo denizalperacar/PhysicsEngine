@@ -42,6 +42,8 @@
 
 - [ ] htm to dcm
 
+- [ ] add vector resolution to htm 
+
 - [ ] htm to euler
 
 - [ ] implement matrix slice accessors
