@@ -11,7 +11,8 @@ struct RelativeFrame : public AbstractRelativeFrame<T, ALIGNMENT> {
   PE_HOST_DEVICE RelativeFrame(
       Frame<T, ALIGNMENT> *parent, 
       const vector_t<T, 3>& position, 
-      const quaternion_t<T>& quaternion) {
+      const quaternion_t<T>& quaternion
+  ) {  
     this->parent = parent;
     PE_UNROLL
     for (int i = 0; i < 3; i++) {
@@ -20,6 +21,8 @@ struct RelativeFrame : public AbstractRelativeFrame<T, ALIGNMENT> {
     }
     this->quaternion[3] = quaternion[3];
   }
+
+  
 
   PE_HOST_DEVICE virtual vector_t<T, 3> get_position() const override {
     vector_t<T, 3> pos;
@@ -110,8 +113,7 @@ struct RelativeFrame : public AbstractRelativeFrame<T, ALIGNMENT> {
     return this == &frame;
   }
 
-  vector_t<T, 4> position;
-  quaternion_t<T> quaternion;
+  htm_t<T> htm;
   Frame<T, ALIGNMENT> *parent;
 };
 
