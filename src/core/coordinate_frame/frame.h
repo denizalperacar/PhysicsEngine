@@ -35,16 +35,24 @@ Here two types of coordinate frames are implemented. The first type
 is a stationary frame and the second is moving frame.
 */
 template <typename T, uint32_t ALIGNMENT>
-struct Frame {
+struct FrameBase {
   using value_type = T;
   
   // no default frame constructor
-  Frame() = delete;
   PE_HOST_DEVICE htm_t<T> get_htm() const = 0;
-  PE_HOST_DEVICE virtual void set_htm(const htm_t<T>& htm) = 0;
   PE_HOST_DEVICE virtual vector_t<T, 3> get_position() const = 0;
-  PE_HOST_DEVICE virtual void set_position(const vector_t<T, 3>& position) = 0;
   PE_HOST_DEVICE virtual quaternion_t<T> get_quaternion() const = 0;
+};
+
+template <typename T, uint32_t ALIGNMENT>
+struct Frame : public FrameBase<T, ALIGNMENT> {
+  using value_type = T;
+  
+  PE_HOST_DEVICE htm_t<T> get_htm() const = 0;
+  PE_HOST_DEVICE virtual vector_t<T, 3> get_position() const = 0;
+  PE_HOST_DEVICE virtual quaternion_t<T> get_quaternion() const = 0;
+  PE_HOST_DEVICE virtual void set_htm(const htm_t<T>& htm) = 0;
+  PE_HOST_DEVICE virtual void set_position(const vector_t<T, 3>& position) = 0;
   PE_HOST_DEVICE virtual void set_quaternion(const quaternion_t<T>& quaternion) = 0;
   PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> operator*(const Frame& frame) const = 0;
   PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> operator*(const htm_t<T>& htm) const = 0;
@@ -70,7 +78,7 @@ struct AbstractRelativeFrame : public Frame<T, ALIGNMENT>{
 };
 
 template <typename T, uint32_t ALIGNMENT>
-struct AbsoluteFrame : public Frame<T, ALIGNMENT>{
+struct AbstractAbsoluteFrame : public Frame<T, ALIGNMENT>{
   using value_type = T;
 };
 

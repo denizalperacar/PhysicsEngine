@@ -9,7 +9,7 @@
 PE_BEGIN
 
 template <typename T, uint32_t ALIGNMENT>
-struct GlobalFrame : public Frame<T, ALIGNMENT> {
+struct GlobalFrame : public FrameBase<T, ALIGNMENT> {
 
   GlobalFrame() = delete;
   GlobalFrame(const GlobalFrame&) = delete;
@@ -28,37 +28,26 @@ struct GlobalFrame : public Frame<T, ALIGNMENT> {
   @return: identity htm
   */
   PE_HOST_DEVICE htm_t<T> get_htm() const override {
-    return htm_;
+    return htm_<T>();
   }
 
-  
-
-  tamplate <uint32_t A>
-  PE_HOST_DEVICE virtual void set_htm(const htm_t<T, A>& htm) override {
-    htm_ = htm;
+  PE_HOST_DEVICE virtual vector_t<T, 3> get_position() const override {
+    return vector_t<T, 3>();
   }
 
-  PE_HOST_DEVICE virtual vector_t<T, 3> get_position() const = 0;
-  PE_HOST_DEVICE virtual void set_position(const vector_t<T, 3>& position) = 0;
-  PE_HOST_DEVICE virtual quaternion_t<T> get_quaternion() const = 0;
-  PE_HOST_DEVICE virtual void set_quaternion(const quaternion_t<T>& quaternion) = 0;
-  PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> operator*(const Frame& frame) const = 0;
-  PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> operator*(const htm_t<T>& htm) const = 0;
-  PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> inverted() const = 0;
-  PE_HOST_DEVICE virtual void invert() = 0;
-  PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> resolve_in_frame(const Frame<T, ALIGNMENT>& frame) const = 0;
-  PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> resolve_in_frame(const htm_t<T>& htm) const = 0;
-  PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> operator()(const Frame<T, ALIGNMENT>& frame) const = 0; // resolve in frame
-  PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> operator()(const htm_t<T>& htm) const = 0; // resolve in frame
-  PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> operator()() const = 0; // resolve in global frame
+  PE_HOST_DEVICE virtual quaternion_t<T> get_quaternion() const override {
+    return quaternion_t<T>();
+  }
 
-private:
-  htm_t<T, ALIGNMENT> htm_ = htm_t<T, ALIGNMENT>::identity();
+  PE_HOST_DEVICE bool is_global(const FrameBase<T, ALIGNMENT>& frame) const {
+    return this == &frame;
+  }
+
+  PE_HOST_DEVICE bool is_global(const Frame<T, ALIGNMENT>*& frame) const {
+    return this == frame;
+  }
 
 };
-
-
-
 
 PE_END
 
