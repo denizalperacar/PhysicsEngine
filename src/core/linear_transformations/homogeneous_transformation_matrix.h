@@ -52,27 +52,27 @@ position of a point in frame C can be calculated as follows:
 PE_BEGIN
 
 #define PE_HTM_FROM_ROT1(dir, name) \
-PE_HOST_DEVICE void set_dcm_from_euler_##name##_rotation(T ang1) { \
-  return set_dcm(set_dcm_from_euler_##name##_rotation(ang1)); \
+PE_HOST_DEVICE void set_dcm_from_euler_##name##_rotation(T ang1, bool is_radian = true) { \
+  return set_dcm(rotation_##name(ang1, is_radian)); \
 } \
-PE_HOST_DEVICE void set_dcm_from_euler_##dir##_rotation(T ang1) { \
-  return set_dcm(set_dcm_from_euler_##name##_rotation(ang1)); \
+PE_HOST_DEVICE void set_dcm_from_euler_##dir##_rotation(T ang1, bool is_radian = true) { \
+  return set_dcm(rotation_##name(ang1, is_radian)); \
 }
 
 #define PE_HTM_FROM_ROT2(dir, name) \
-PE_HOST_DEVICE void set_dcm_from_euler_##name##_rotation(T ang1, T ang2) { \
-  return set_dcm(set_dcm_from_euler_##name##_rotation(ang1, ang2)); \
+PE_HOST_DEVICE void set_dcm_from_euler_##name##_rotation(T ang1, T ang2, bool is_radian = true) { \
+  return set_dcm(rotation_##name(ang1, ang2, is_radian)); \
 } \
-PE_HOST_DEVICE void set_dcm_from_euler_##dir##_rotation(T ang1, T ang2) { \
-  return set_dcm(set_dcm_from_euler_##name##_rotation(ang1, ang2)); \
+PE_HOST_DEVICE void set_dcm_from_euler_##dir##_rotation(T ang1, T ang2, bool is_radian = true) { \
+  return set_dcm(rotation_##name(ang1, ang2, is_radian)); \
 }
 
 #define PE_HTM_FROM_ROT3(dir, name) \
-PE_HOST_DEVICE void set_dcm_from_euler_##name##_rotation(T ang1, T ang2, T ang3) { \
-  return set_dcm(set_dcm_from_euler_##name##_rotation(ang1, ang2, ang3)); \
+PE_HOST_DEVICE void set_dcm_from_euler_##name##_rotation(T ang1, T ang2, T ang3, bool is_radian = true) { \
+  return set_dcm(rotation_##name(ang1, ang2, ang3, is_radian)); \
 } \
-PE_HOST_DEVICE void set_dcm_from_euler_##dir##_rotation(T ang1, T ang2, T ang3) { \
-  return set_dcm(set_dcm_from_euler_##name##_rotation(ang1, ang2, ang3)); \
+PE_HOST_DEVICE void set_dcm_from_euler_##dir##_rotation(T ang1, T ang2, T ang3, bool is_radian = true) { \
+  return set_dcm(rotation_##name(ang1, ang2, ang3, is_radian)); \
 }
 
 #define PE_HTM_FROM_ROT() \
@@ -122,7 +122,8 @@ struct htm_t {
   }
 
   PE_HOST_DEVICE htm_t(const quaternion_t<T>& q, const vector_t<T, 3>& position) {
-    from_pdcm(q.to_dcm(), position);
+    quaternion_t<T> q_in = q;
+    from_pdcm(q_in.to_matrix(), position);
   }
 
   PE_HOST_DEVICE htm_t(vector_t<T, 3> position) {
@@ -188,7 +189,7 @@ struct htm_t {
   PE_HOST_DEVICE void set_position(const vector_t<T, 3>& position) {
     PE_UNROLL
     for (int i = 0; i < 3; ++i) {
-      matrix[i][3] = position[i];
+      matrix(i, 3) = position[i];
     }
   }
 
@@ -428,65 +429,65 @@ struct htm_t {
 
 #define PE_HTM_FROM_ROT1(dir, name) \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_euler_##name##_rotation(T ang1) { \
-  return htm_t<T>(from_euler_##name##_rotation(ang1)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##name##_rotation(T ang1, bool is_radian = true) { \
+  return htm_t<T>(rotation_##name(ang1, is_radian)); \
 } \
 \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_euler_##dir##_rotation(T ang1) { \
-  return htm_t<T>(from_euler_##name##_rotation(ang1)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##dir##_rotation(T ang1, bool is_radian = true) { \
+  return htm_t<T>(rotation_##name(ang1, is_radian)); \
 } \
 \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_euler_##name##_rotation(T ang1, const vector_t<T, 3>& position) { \
-  return htm_t<T>(from_euler_##name##_rotation(ang1), position); \
+PE_HOST_DEVICE htm_t<T> from_euler_##name##_rotation(T ang1, const vector_t<T, 3>& position, bool is_radian = true) { \
+  return htm_t<T>(rotation_##name(ang1), position, is_radian); \
 } \
 \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_euler_##dir##_rotation(T ang1, const vector_t<T, 3>& position) { \
-  return htm_t<T>(from_euler_##name##_rotation(ang1, position)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##dir##_rotation(T ang1, const vector_t<T, 3>& position, bool is_radian = true) { \
+  return htm_t<T>(rotation_##name(ang1, position, is_radian)); \
 }
 
 #define PE_HTM_FROM_ROT2(dir, name) \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_euler_##name##_rotation(T ang1, T ang2) { \
-  return htm_t<T>(from_euler_##name##_rotation(ang1, ang2)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##name##_rotation(T ang1, T ang2, bool is_radian = true) { \
+  return htm_t<T>(rotation_##name(ang1, ang2, is_radian)); \
 } \
 \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_euler_##dir##_rotation(T ang1, T ang2) { \
-  return htm_t<T>(from_euler_##name##_rotation(ang1, ang2)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##dir##_rotation(T ang1, T ang2, bool is_radian = true) { \
+  return htm_t<T>(rotation_##name(ang1, ang2, is_radian)); \
 } \
 \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_euler_##name##_rotation(T ang1, T ang2, const vector_t<T, 3>& position) { \
-  return htm_t<T>(from_euler_##name##_rotation(ang1, ang2, position)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##name##_rotation(T ang1, T ang2, const vector_t<T, 3>& position, bool is_radian = true) { \
+  return htm_t<T>(rotation_##name(ang1, ang2, position, is_radian)); \
 } \
 \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_euler_##dir##_rotation(T ang1, T ang2, const vector_t<T, 3>& position) { \
-  return htm_t<T>(from_euler_##name##_rotation(ang1, ang2, position)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##dir##_rotation(T ang1, T ang2, const vector_t<T, 3>& position, bool is_radian = true) { \
+  return htm_t<T>(rotation_##name(ang1, ang2, position, is_radian)); \
 } \
 
 #define PE_HTM_FROM_ROT3(dir, name) \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_euler_##name##_rotation(T ang1, T ang2, T ang3) { \
-  return htm_t<T>(from_euler_##name##_rotation(ang1, ang2, ang3)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##name##_rotation(T ang1, T ang2, T ang3, bool is_radian = true) { \
+  return htm_t<T>(rotation_##name(ang1, ang2, ang3, is_radian)); \
 } \
 \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_euler_##dir##_rotation(T ang1, T ang2, T ang3) { \
-  return htm_t<T>(from_euler_##name##_rotation(ang1, ang2, ang3)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##dir##_rotation(T ang1, T ang2, T ang3, bool is_radian = true) { \
+  return htm_t<T>(rotation_##name(ang1, ang2, ang3, is_radian)); \
 } \
 \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_euler_##name##_rotation(T ang1, T ang2, T ang3, const vector_t<T, 3>& position) { \
-  return htm_t<T>(from_euler_##name##_rotation(ang1, ang2, ang3, position)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##name##_rotation(T ang1, T ang2, T ang3, const vector_t<T, 3>& position, bool is_radian = true) { \
+  return htm_t<T>(rotation_##name(ang1, ang2, ang3, position, is_radian)); \
 } \
 \
 template <typename T> \
-PE_HOST_DEVICE htm_t<T> from_euler_##dir##_rotation(T ang1, T ang2, T ang3, const vector_t<T, 3>& position) { \
-  return htm_t<T>(from_euler_##name##_rotation(ang1, ang2, ang3, position)); \
+PE_HOST_DEVICE htm_t<T> from_euler_##dir##_rotation(T ang1, T ang2, T ang3, const vector_t<T, 3>& position, bool is_radian = true) { \
+  return htm_t<T>(rotation_##name(ang1, ang2, ang3, position, is_radian)); \
 } \
 
 PE_HTM_FROM_ROT()
@@ -495,6 +496,11 @@ PE_HTM_FROM_ROT()
 #undef PE_HTM_FROM_ROT2
 #undef PE_HTM_FROM_ROT3
 #undef PE_HTM_FROM_ROT
+
+template <typename T>
+void print(const htm_t<T>& htm) {
+  htm.print();
+}
 
 PE_END
 

@@ -15,10 +15,10 @@ int main() {
   PE::vector_t<double, 3> u1(4., 5., 6.);
   PE::matrix_t<double, 3, 3> e = PE::rodrigues_formula(PE::u1<double>(), 90.0, false);
 
-  PE::matrix_t<double, 3, 3> f = PE::rotation_zyx(90.0, 30.0, -530.0, false);
-  PE::quaternion_t<double> q;
-  PE::print(f);
-  PE::print(q);
-  PE::print(a);
+  PE::vector_t<double, 3> pos {0., 2.4414, 0.52};
+  PE::htm_t<double> htm(pos);
+  htm.set_dcm_from_euler_123_rotation(0., 0., 90., false);
+
+  print(htm);
   return 0;
 }
