@@ -81,7 +81,7 @@ struct matrix_t {
     col[ 1 ] = vec2;
   }
 
-    template <size_t A=sizeof(T)>
+  template <size_t A=sizeof(T)>
   PE_HOST_DEVICE matrix_t<T, R, C>(
       const vector_t<T, R, A>& vec1, 
       const vector_t<T, R, A>& vec2, 
@@ -92,7 +92,7 @@ struct matrix_t {
     col[ 2 ] = vec3;
   }
 
-    template <size_t A=sizeof(T)>
+  template <size_t A=sizeof(T)>
   PE_HOST_DEVICE matrix_t<T, R, C>(
       const vector_t<T, R, A>& vec1, 
       const vector_t<T, R, A>& vec2,

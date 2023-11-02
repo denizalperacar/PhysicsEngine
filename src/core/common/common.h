@@ -49,10 +49,15 @@ PE_BEGIN
 
 // utility functions
 
-PE_HOST_DEVICE inline float degrees_to_radians(float degrees) {
+template <typename T>
+PE_HOST_DEVICE inline T degrees_to_radians(T degrees) {
 	return degrees * pi / 180.0f;
 }
 
+template <typename T>
+PE_HOST_DEVICE inline T radians_to_degrees(T rad) {
+	return rad * 180.f / pi;
+}
 
 PE_END
 
