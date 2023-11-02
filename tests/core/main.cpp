@@ -17,8 +17,18 @@ int main() {
 
   PE::vector_t<double, 3> pos {0., 2.4414, 0.52};
   PE::htm_t<double> htm(pos);
-  htm.set_dcm_from_euler_123_rotation(0., 0., 90., false);
+  htm.set_dcm_from_euler_123_rotation(90., 0., -180., false);
+  int n = 10;
+  PE::vector_t<double, 3> p;
 
-  print(htm);
+  for (int i = 0; i < n; i++) {
+    double d = PE::length(p);
+    double xl = PE::sin(PE::degrees_to_radians(n) * d);  
+    double yl = PE::cos(PE::degrees_to_radians(n) * d);  
+    
+  }
+
+
+
   return 0;
 }

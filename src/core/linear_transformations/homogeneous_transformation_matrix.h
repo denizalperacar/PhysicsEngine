@@ -356,62 +356,62 @@ struct htm_t {
   /*
   @brief: returns the x-axis of the htm resolved in its parents frame i.e [u1]^{A/B}
   */
-  template<size_t A>
+  template<size_t A = sizeof(T)>
   PE_HOST_DEVICE vector_t<T, 3, A> ux_ab() {
     return vector_t<T, 3, A>(matrix[0][0], matrix[1][0], matrix[2][0]); // return the first row
   }
 
-  template<size_t A>
+  template<size_t A = sizeof(T)>
   PE_HOST_DEVICE vector_t<T, 3, A> u1_ab() {
     return vector_t<T, 3, A>(matrix[0][0], matrix[1][0], matrix[2][0]); // return the first row
   }
 
-  template<size_t A>
+  template<size_t A = sizeof(T)>
   PE_HOST_DEVICE vector_t<T, 3, A> uy_ab() {
     return vector_t<T, 3, A>(matrix[0][1], matrix[1][1], matrix[2][1]); // return the 2nd row
   }
 
-  template<size_t A>
+  template<size_t A = sizeof(T)>
   PE_HOST_DEVICE vector_t<T, 3, A> u2_ab() {
     return vector_t<T, 3, A>(matrix[0][1], matrix[1][1], matrix[2][1]); // return the 2nd row
   }
 
-  template<size_t A>
+  template<size_t A = sizeof(T)>
   PE_HOST_DEVICE vector_t<T, 3, A> uz_ab() {
     return vector_t<T, 3, A>(matrix[0][2], matrix[1][2], matrix[2][2]); // return the 3rd row
   }
 
-  template<size_t A>
+  template<size_t A = sizeof(T)>
   PE_HOST_DEVICE vector_t<T, 3, A> u3_ab() {
     return vector_t<T, 3, A>(matrix[0][2], matrix[1][2], matrix[2][2]); // return the 3rd row
   }
 
-  template<size_t A>
+  template<size_t A = sizeof(T)>
   PE_HOST_DEVICE vector_t<T, 3, A> ux_ba() {
     return vector_t<T, 3, A>(matrix[0][0], matrix[0][1], matrix[0][2]); // return the first col
   }
 
-  template<size_t A>
+  template<size_t A = sizeof(T)>
   PE_HOST_DEVICE vector_t<T, 3, A> u1_ba() {
     return vector_t<T, 3, A>(matrix[0][0], matrix[0][1], matrix[0][2]); // return the first row
   }
 
-  template<size_t A>
+  template<size_t A = sizeof(T)>
   PE_HOST_DEVICE vector_t<T, 3, A> uy_ba() {
     return vector_t<T, 3, A>(matrix[1][0], matrix[1][1], matrix[1][2]); // return the 2nd row
   }
 
-  template<size_t A>
+  template<size_t A = sizeof(T)>
   PE_HOST_DEVICE vector_t<T, 3, A> u2_ba() {
     return vector_t<T, 3, A>(matrix[1][0], matrix[1][1], matrix[1][2]); // return the 2nd row
   }
 
-  template<size_t A>
+  template<size_t A = sizeof(T)>
   PE_HOST_DEVICE vector_t<T, 3, A> uz_ba() {
     return vector_t<T, 3, A>(matrix[2][0], matrix[2][1], matrix[2][2]); // return the 3rd row
   }
 
-  template<size_t A>
+  template<size_t A = sizeof(T)>
   PE_HOST_DEVICE vector_t<T, 3, A> u3_ba() {
     return vector_t<T, 3, A>(matrix[2][0], matrix[2][1], matrix[2][2]); // return the 3rd row
   }

@@ -102,7 +102,7 @@ using enable_if_size_and_type_match_t = std::enable_if_t<sizeof...(Ts) == N && c
   PE_HOST_DEVICE static constexpr uint32_t alignment() { return ALIGNMENT; } \
 
 
-template <typename T, uint32_t DIM, uint32_t ALIGNMENT=sizeof(T)>
+template <typename T, uint32_t DIM, size_t ALIGNMENT=sizeof(T)>
 struct alignas(ALIGNMENT) vector_t {
 
 public:
@@ -116,7 +116,7 @@ public:
   }
 };
 
-template <typename T, uint32_t ALIGNMENT>
+template <typename T, size_t ALIGNMENT>
 struct alignas(ALIGNMENT) vector_t<T, 1, ALIGNMENT> {
 
 public:
@@ -126,7 +126,7 @@ public:
 };
 
 
-template <typename T, uint32_t ALIGNMENT>
+template <typename T, size_t ALIGNMENT>
 struct alignas(ALIGNMENT) vector_t<T, 2, ALIGNMENT> {
 
 public:
@@ -137,7 +137,7 @@ public:
   PE_HOST_DEVICE vector_t(T a, T b) : x(a), y(b) {}
 };
 
-template <typename T, uint32_t ALIGNMENT>
+template <typename T, size_t ALIGNMENT>
 struct alignas(ALIGNMENT) vector_t<T, 3, ALIGNMENT> {
 
 public:
@@ -153,7 +153,7 @@ public:
 };
 
 
-template <typename T, uint32_t ALIGNMENT>
+template <typename T, size_t ALIGNMENT>
 struct alignas(ALIGNMENT) vector_t<T, 4, ALIGNMENT> {
 
 public:
@@ -502,10 +502,10 @@ VECTOR_SPACE_UNIT_VECTOR_3D(M) // moment
 template <uint32_t D> using name = vector_t<T, D>; \
 template <uint32_t D> using aligned##name = vector_t<T, D, sizeof(T) * D>; \
 template <uint32_t D> using a##name = vector_t<T, D, sizeof(T) * D>; \
-using name##1 = vector_t<T, 1>; \
-using name##2 = vector_t<T, 2>; \
-using name##3 = vector_t<T, 3>; \
-using name##4 = vector_t<T, 4>;
+using name##1 = name<1>; \
+using name##2 = name<2>; \
+using name##3 = name<3>; \
+using name##4 = name<4>;
 
 NON_TEMPLATED_VECTOR_TYPES(bvec, bool)
 NON_TEMPLATED_VECTOR_TYPES(vec, float)
