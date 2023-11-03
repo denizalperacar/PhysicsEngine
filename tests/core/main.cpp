@@ -27,9 +27,8 @@ int main() {
     double xl = PE::sin(PE::degrees_to_radians(ii)) * d;  
     double yl = PE::cos(PE::degrees_to_radians(ii)) * d;  
     p = PE::vector_t<double, 3>(xl, yl, 0.52);
-    htm.set_dcm_from_euler_123_rotation(90., 0., (PE::degrees_to_radians(ii) + PE::degrees_to_radians(180.)) * -1, false);
+    htm.set_dcm_from_euler_321_rotation(90., 0., (PE::degrees_to_radians(ii) + PE::degrees_to_radians(180.)) * -1, false);
     htm.set_position(p);
-    print(htm);
   }
 
   return 0;

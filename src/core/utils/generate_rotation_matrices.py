@@ -43,8 +43,8 @@ for i in range(3):
         matrices = [r1, r2, r3]
 
 
-
-        res = matrices[i]@matrices[j]@matrices[k]
+        res = matrices[k]@matrices[j]@matrices[i]
+        # res = matrices[i]@matrices[j]@matrices[k]
         print("// r{}_{}_{} = ".format(i+1, j+1, k+1))
 
         print("template <typename T>")
