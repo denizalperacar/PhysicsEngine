@@ -1,6 +1,24 @@
 #include "../../src/core/common/pch.h"
 #include "../../src/core/coordinate_frame/frame.h"
 
+#include <fstream>
+
+void write_json(PE::htm_t<double> &htm, std::ofstream &file) {
+  file << "  \"transform_matrix\": [\n";
+  PE_UNROLL
+  for (int i = 0; i < 4; ++i) {
+    file << "    [\n      " << htm.matrix[0][i] << ", " << htm.matrix[1][i] << ", " << htm.matrix[2][i] << ", " << htm.matrix[3][i] << "\n" << "    ],\n";
+  }
+  file << "  ]\n";
+}
+
+void write_image_json(PE::htm_t<double> &htm, std::ofstream &file, std::string name, double sharpness) {
+  file << "{\n  \"file_path\": \"" << name << "\",\n";
+  file << "  \"sharpness\": " << sharpness << ",\n";
+  write_json(htm, file);
+  file << "},\n";
+}
+
 
 int main() {
 
@@ -18,19 +36,23 @@ int main() {
   PE::vector_t<double, 3> pos {0., 2.4791, 0.52};
   PE::htm_t<double> htm(pos);
   htm.set_dcm_from_euler_123_rotation(90., 0., -180., false);
-  int n = 10;
+  int n = 7; int start{ 160 };
   PE::vector_t<double, 3> p = pos;
 
+  double sharpness = 110.74499252993057;
+  std::ofstream file;
+  file.open("/home/deniz/codes/PE/PhysicsEngine/tests/core/orientations.txt");
+
   for (int i = 0; i < n; i++) {
-    double ii = i * 10.0;
+    double ii = i * 10.0 + start;
     double d = PE::length(PE::dvec3(pos[0], pos[1], 0.));
     double xl = PE::sin(PE::degrees_to_radians(ii)) * d;  
     double yl = PE::cos(PE::degrees_to_radians(ii)) * d;  
     p = PE::vector_t<double, 3>(xl, yl, 0.52);
     htm.set_dcm_from_euler_123_rotation(90., 0., (ii + 180) * -1, false);
     htm.set_position(p);
-    print(htm);
+    write_image_json(htm, file, fmt::format("./images/image{}.png", ii), sharpness);
   }
-
+  file.close();
   return 0;
 }

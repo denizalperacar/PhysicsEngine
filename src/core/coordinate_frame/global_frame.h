@@ -8,7 +8,7 @@
 
 PE_BEGIN
 
-template <typename T, uint32_t ALIGNMENT>
+template <typename T, size_t ALIGNMENT>
 struct GlobalFrame : public FrameBase<T, ALIGNMENT> {
 
   GlobalFrame() = delete;

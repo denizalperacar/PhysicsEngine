@@ -5,7 +5,7 @@
 
 PE_BEGIN
 
-template <typename T, uint32_t ALIGNMENT>
+template <typename T, size_t ALIGNMENT>
 struct RelativeFrame : public AbstractRelativeFrame<T, ALIGNMENT> {
 
   PE_HOST_DEVICE RelativeFrame(
@@ -14,15 +14,20 @@ struct RelativeFrame : public AbstractRelativeFrame<T, ALIGNMENT> {
       const quaternion_t<T>& quaternion
   ) {  
     this->parent = parent;
-    PE_UNROLL
-    for (int i = 0; i < 3; i++) {
-      this->position[i] = position[i];
-      this->quaternion[i] = quaternion[i];
-    }
-    this->quaternion[3] = quaternion[3];
+    htm = htm_t<T>(quaternion, position);
   }
 
-  
+  PE_HOST_DEVICE RelativeFrame(
+      Frame<T, ALIGNMENT> *parent,  
+      const htm_t<T>& htm
+  ) {  
+    this->parent = parent;
+    this->htm = htm;
+  }
+
+  PE_HOST_DEVICE virtual htm_t<T> get_htm() const override {
+    return htm;
+  }
 
   PE_HOST_DEVICE virtual vector_t<T, 3> get_position() const override {
     vector_t<T, 3> pos;
@@ -33,24 +38,24 @@ struct RelativeFrame : public AbstractRelativeFrame<T, ALIGNMENT> {
     return pos;
   }
 
-  PE_HOST_DEVICE virtual htm_t<T> get_htm() const override {
-    return htm_t<T>(quaternion, get_position());
+  PE_HOST_DEVICE virtual quaternion_t<T> get_quaternion() const override {
+    return htm.get_quaternion();
+  }
+
+  PE_HOST_DEVICE virtual void set_htm(const htm_t<T>& input_htm) override {
+    htm = input_hmt;
   }
 
   PE_HOST_DEVICE virtual void set_position(const vector_t<T, 3>& position) override {
-    this->position = position;
-  }
-
-  PE_HOST_DEVICE virtual void set_htm(const htm_t<T>& htm) override {
-    quaternion = htm.get_quaternion();
-  }
-
-  PE_HOST_DEVICE virtual quaternion_t<T> get_quaternion() const override {
-    return quaternion;
+    htm.set_position(position);
   }
 
   PE_HOST_DEVICE virtual void set_quaternion(const quaternion_t<T>& quaternion) override {
-    this->quaternion = quaternion;
+    htm.set_from_quaternion(quaternion);
+  }
+
+  PE_HOST_DEVICE virtual void set_parent(const Frame<T, ALIGNMENT>& frame) override {
+    parent = &frame;
   }
 
   // TODO : check the correctness of this function
