@@ -59,7 +59,9 @@ int main() {
   PE::GlobalFrame<double>& global_frame = PE::GlobalFrame<double>::get_instance();
   PE::GlobalFrame<double>& global_frame2 = PE::GlobalFrame<double>::get_instance();
 
-  std::cout << "Global is singelton: " << (&global_frame == &global_frame2) << std::endl;
+  PE::RelativeFrame<double> rf(&global_frame, PE::vector_t<double, 3>(1., 2., 3.), PE::quaternion_t<double>(1., 0, 0., 0.));
+  
+  std::cout << "Global is singelton: " << ((void*)&global_frame == (void*)&global_frame2) << std::endl;
 
   return 0;
 }

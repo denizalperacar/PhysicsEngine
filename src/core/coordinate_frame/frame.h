@@ -50,12 +50,11 @@ struct Frame : public FrameBase<T, ALIGNMENT> {
   PE_HOST_DEVICE virtual void set_htm(const htm_t<T>& htm) = 0;
   PE_HOST_DEVICE virtual void set_position(const vector_t<T, 3>& position) = 0;
   PE_HOST_DEVICE virtual void set_quaternion(const quaternion_t<T>& quaternion) = 0;
-  PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> operator*(const Frame& frame) const = 0;
-  PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> operator*(const htm_t<T>& htm) const = 0;
-  PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> inverted() const = 0;
+  PE_HOST_DEVICE virtual htm_t<T> operator*(const htm_t<T>& htm) const = 0;
+  PE_HOST_DEVICE virtual htm_t<T> inverted() const = 0;
   PE_HOST_DEVICE virtual void invert() = 0;
   PE_HOST_DEVICE virtual vector_t<T, 3> resolve_in_frame(const vector_t<T, 3>& vec) const = 0;
-  PE_HOST_DEVICE virtual vector_t<T, 3> resolve_in_frame(const vector_t<T, 4>& vec) const = 0;
+  PE_HOST_DEVICE virtual vector_t<T, 4> resolve_in_frame(const vector_t<T, 4>& vec) const = 0;
   PE_HOST_DEVICE virtual void normalize_dcm() = 0;
 };
 
@@ -75,7 +74,7 @@ struct AbsoluteFrame : public AbstractAbsoluteFrame<T, ALIGNMENT> {};
 template <typename T, size_t ALIGNMENT>
 struct AbstractRelativeFrame : public Frame<T, ALIGNMENT>{
   using value_type = T;
-  PE_HOST_DEVICE virtual Frame<T, ALIGNMENT>* get_parent() const = 0;
+  PE_HOST_DEVICE virtual FrameBase<T, ALIGNMENT>* get_parent() const = 0;
   PE_HOST_DEVICE virtual void set_parent(Frame<T, ALIGNMENT>* parent) = 0;
   PE_HOST_DEVICE virtual void set_parent(Frame<T, ALIGNMENT>& parent) = 0;
   PE_HOST_DEVICE virtual void set_parent(const Frame<T, ALIGNMENT>& frame) = 0;

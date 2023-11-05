@@ -12,7 +12,7 @@
 
 PE_BEGIN
 
-template <typename T, uint32_t ALIGNMENT=sizeof(T)>
+template <typename T, size_t ALIGNMENT=sizeof(T)>
 struct quaternion_t {
 
   using value_type = T;
@@ -204,7 +204,7 @@ struct quaternion_t {
   #endif
   }
 
-  template <uint32_t A>
+  template <size_t A>
   PE_HOST_DEVICE quaternion_t<T, A> operator*(const quaternion_t<T, A>& q) const {
     quaternion_t<T, A> result;
     result.quat.w = quat.w * q.quat.w - quat.x * q.quat.x - quat.y * q.quat.y - quat.z * q.quat.z;
