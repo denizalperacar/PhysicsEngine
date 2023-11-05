@@ -28,7 +28,7 @@ struct GlobalFrame : public FrameBase<T, ALIGNMENT> {
   @return: identity htm
   */
   PE_HOST_DEVICE htm_t<T> get_htm() const override {
-    return htm_<T>();
+    return htm_t<T>();
   }
 
   PE_HOST_DEVICE virtual vector_t<T, 3> get_position() const override {

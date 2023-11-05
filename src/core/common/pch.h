@@ -7,6 +7,7 @@
 #include "../linear_transformations/rotation_dyads.h"
 #include "../linear_transformations/quaternion.h"
 #include "../linear_transformations/homogeneous_transformation_matrix.h"
+#include "../coordinate_frame/global_frame.h"
 
 
 
