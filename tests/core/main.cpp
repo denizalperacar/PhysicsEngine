@@ -54,5 +54,12 @@ int main() {
     write_image_json(htm, file, fmt::format("./images/image{}.png", ii), sharpness);
   }
   file.close();
+
+
+  PE::GlobalFrame<double>& global_frame = PE::GlobalFrame<double>::get_instance();
+  PE::GlobalFrame<double>& global_frame2 = PE::GlobalFrame<double>::get_instance();
+
+  std::cout << "Global is singelton: " << (&global_frame == &global_frame2) << std::endl;
+
   return 0;
 }

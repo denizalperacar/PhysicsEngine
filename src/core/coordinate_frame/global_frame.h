@@ -8,10 +8,10 @@
 
 PE_BEGIN
 
-template <typename T, size_t ALIGNMENT>
+template <typename T, size_t ALIGNMENT=sizeof(T)>
 struct GlobalFrame : public FrameBase<T, ALIGNMENT> {
 
-  GlobalFrame() = delete;
+  GlobalFrame() = default;
   GlobalFrame(const GlobalFrame&) = delete;
   GlobalFrame& operator=(const GlobalFrame&) = delete;
   GlobalFrame(GlobalFrame&&) = delete;

@@ -39,7 +39,7 @@ struct FrameBase {
   using value_type = T;
   
   // no default frame constructor
-  PE_HOST_DEVICE htm_t<T> get_htm() const = 0;
+  PE_HOST_DEVICE virtual htm_t<T> get_htm() const = 0;
   PE_HOST_DEVICE virtual vector_t<T, 3> get_position() const = 0;
   PE_HOST_DEVICE virtual quaternion_t<T> get_quaternion() const = 0;
 };
@@ -47,10 +47,6 @@ struct FrameBase {
 template <typename T, size_t ALIGNMENT>
 struct Frame : public FrameBase<T, ALIGNMENT> {
   using value_type = T;
-  
-  PE_HOST_DEVICE htm_t<T> get_htm() const = 0;
-  PE_HOST_DEVICE virtual vector_t<T, 3> get_position() const = 0;
-  PE_HOST_DEVICE virtual quaternion_t<T> get_quaternion() const = 0;
   PE_HOST_DEVICE virtual void set_htm(const htm_t<T>& htm) = 0;
   PE_HOST_DEVICE virtual void set_position(const vector_t<T, 3>& position) = 0;
   PE_HOST_DEVICE virtual void set_quaternion(const quaternion_t<T>& quaternion) = 0;
@@ -68,6 +64,8 @@ struct AbstractAbsoluteFrame : public Frame<T, ALIGNMENT>{
   using value_type = T;
   PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> operator()(const Frame<T, ALIGNMENT>& frame) const = 0; // resolve in frame
   PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> operator()(const htm_t<T>& htm) const = 0; // resolve in frame
+  PE_HOST_DEVICE virtual AbstractAbsoluteFrame<T, ALIGNMENT>& operator=(const htm_t<T>& htm) = 0;
+
 };
 
 // Forward declare the concrete Absolute Frame class
@@ -83,9 +81,12 @@ struct AbstractRelativeFrame : public Frame<T, ALIGNMENT>{
   PE_HOST_DEVICE virtual void set_parent(const Frame<T, ALIGNMENT>& frame) = 0;
   PE_HOST_DEVICE virtual htm_t<T> resolve_in_parent() const = 0;
   PE_HOST_DEVICE virtual vector_t<T, 3> resolve_in_parent(const vector_t<T, 3>& vec) const = 0;
+  PE_HOST_DEVICE virtual vector_t<T, 4> resolve_in_parent(const vector_t<T, 4>& vec) const = 0;
   PE_HOST_DEVICE virtual bool operator==(const Frame<T, ALIGNMENT>& frame) = 0;
   PE_HOST_DEVICE virtual AbsoluteFrame<T, ALIGNMENT> resolve_frame_in_global() const = 0;
   PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> operator()() const = 0; // resolve in global frame
+
+  PE_HOST_DEVICE virtual AbstractRelativeFrame<T, ALIGNMENT>& operator=(const htm_t<T>& htm) = 0;
 };
 
 PE_END
