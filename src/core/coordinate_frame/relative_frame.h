@@ -125,11 +125,18 @@ struct RelativeFrame : public AbstractRelativeFrame<T, ALIGNMENT> {
     return *this;
   }
 
+  PE_HOST_DEVICE void print() {
+    htm.print();
+  }
+
   htm_t<T> htm;
   FrameBase<T, ALIGNMENT> *parent = nullptr;
 };
 
-
+template <typename T, size_t ALIGNMENT=sizeof(T)>
+void print(const RelativeFrame<T, ALIGNMENT>& frame) {
+  print(frame.htm);
+} 
 
 PE_END
 
