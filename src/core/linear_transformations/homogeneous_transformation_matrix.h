@@ -156,11 +156,21 @@ struct htm_t {
     return htm_t<T>(matrix * rhs.matrix);
   }
 
+  PE_HOST_DEVICE vector_t<T, 3> operator*(const vector_t<T, 3>& rhs) const {
+    vector_t<T, 4> v4(rhs[0], rhs[1], rhs[2], 1);
+    v4 = matrix * v4;
+    return {v4[0], v4[1], v4[2]};
+  }
+
+  PE_HOST_DEVICE vector_t<T, 4> operator*(const vector_t<T, 4>& rhs) const {
+    return matrix * rhs;
+  }
+
   // returns the inverted form of the htm.
   PE_HOST_DEVICE htm_t<T> get_inverse() const {
     matrix_t<T, 3, 3> dcm = get_dcm();
     // invert dcm
-    dcm = dcm.transpose();
+    dcm = transpose(dcm);
     // invert position
     vector_t<T, 3> position = -dcm * get_position();
     return htm_t<T>(dcm, position);
@@ -170,7 +180,7 @@ struct htm_t {
   PE_HOST_DEVICE void invert() {
     matrix_t<T, 3, 3> dcm = get_dcm();
     // invert dcm
-    dcm = dcm.transpose();
+    dcm = transpose(dcm);
     // invert position
     vector_t<T, 3> position = -dcm * get_position();
     from_pdcm(dcm, position);
@@ -194,7 +204,8 @@ struct htm_t {
   }
 
   PE_HOST_DEVICE void set_quaternion(const quaternion_t<T>& q) {
-    set_dcm(q.to_dcm());
+    quaternion_t<T> q_in = q;
+    set_dcm(q_in.to_matrix());
   }
 
   PE_HOST_DEVICE void from_pdcm(const matrix_t<T, 3, 3>& dcm, const vector_t<T, 3>& position) {

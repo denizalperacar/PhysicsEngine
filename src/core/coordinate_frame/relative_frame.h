@@ -66,16 +66,8 @@ struct RelativeFrame : public AbstractRelativeFrame<T, ALIGNMENT> {
     htm = htm_t(quaternion);
   }
 
-  PE_HOST_DEVICE virtual void set_parent(const Frame<T, ALIGNMENT>& frame) override {
-    parent = &frame;
-  }
-
-  PE_HOST_DEVICE virtual void set_parent(Frame<T, ALIGNMENT>* parent) override {
+  PE_HOST_DEVICE virtual void set_parent(FrameBase<T, ALIGNMENT>*& parent) override {
     this->parent = parent;
-  }
-
-  PE_HOST_DEVICE virtual void set_parent(Frame<T, ALIGNMENT>& parent) override {
-    this->parent = &parent;
   }
 
   PE_HOST_DEVICE virtual FrameBase<T, ALIGNMENT>* get_parent() const override {
@@ -102,15 +94,15 @@ struct RelativeFrame : public AbstractRelativeFrame<T, ALIGNMENT> {
   }
 
   PE_HOST_DEVICE virtual htm_t<T> resolve_in_parent() const override {
-    return parent->htm * htm;
+    return parent->get_htm() * htm;
   }
 
   PE_HOST_DEVICE virtual vector_t<T, 3> resolve_in_parent(const vector_t<T, 3>& vec) const override {
-    return (parent->htm * htm) * vec;
+    return (parent->get_htm() * htm) * vec;
   }
 
   PE_HOST_DEVICE virtual vector_t<T, 4> resolve_in_parent(const vector_t<T, 4>& vec) const override {
-    return (parent->htm * htm) * vec;
+    return (parent->get_htm() * htm) * vec;
   }
 
   // checks if the address of the supported frame is the same as the given frame
@@ -118,26 +110,19 @@ struct RelativeFrame : public AbstractRelativeFrame<T, ALIGNMENT> {
     return this == &frame;
   }
 
-  PE_HOST_DEVICE virtual AbsoluteFrame<T, ALIGNMENT> resolve_frame_in_global() const {
+  // TODO: implement this
+  PE_HOST_DEVICE virtual htm_t<T> resolve_frame_in_global() const override {
     htm_t<T> result_htm = htm;
-    GlobalFrame<T, ALIGNMENT> &global = GlobalFrame<T, ALIGNMENT>::get_instance();
-    if (! global.is_global(parent) && parent != nullptr) {
-      return parent->resolve_frame_in_global(global) * result_htm;
-    }
     return result_htm;
   }
 
-  PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> operator()() const {
+  PE_HOST_DEVICE virtual htm_t<T>operator()() const {
     return resolve_frame_in_global();
   }
 
   PE_HOST_DEVICE virtual AbstractRelativeFrame<T, ALIGNMENT>& operator=(const htm_t<T>& htm) {
     this->htm = htm;
     return *this;
-  }
-
-  PE_HOST_DEVICE virtual void normalize_dcm() override {
-    htm.normalize_dcm();
   }
 
   htm_t<T> htm;

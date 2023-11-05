@@ -55,7 +55,6 @@ struct Frame : public FrameBase<T, ALIGNMENT> {
   PE_HOST_DEVICE virtual void invert() = 0;
   PE_HOST_DEVICE virtual vector_t<T, 3> resolve_in_frame(const vector_t<T, 3>& vec) const = 0;
   PE_HOST_DEVICE virtual vector_t<T, 4> resolve_in_frame(const vector_t<T, 4>& vec) const = 0;
-  PE_HOST_DEVICE virtual void normalize_dcm() = 0;
 };
 
 template <typename T, size_t ALIGNMENT>
@@ -71,19 +70,17 @@ struct AbstractAbsoluteFrame : public Frame<T, ALIGNMENT>{
 template <typename T, size_t ALIGNMENT=sizeof(T)> 
 struct AbsoluteFrame : public AbstractAbsoluteFrame<T, ALIGNMENT> {};
 
-template <typename T, size_t ALIGNMENT>
+template <typename T, size_t ALIGNMENT=sizeof(T)>
 struct AbstractRelativeFrame : public Frame<T, ALIGNMENT>{
   using value_type = T;
   PE_HOST_DEVICE virtual FrameBase<T, ALIGNMENT>* get_parent() const = 0;
-  PE_HOST_DEVICE virtual void set_parent(Frame<T, ALIGNMENT>* parent) = 0;
-  PE_HOST_DEVICE virtual void set_parent(Frame<T, ALIGNMENT>& parent) = 0;
-  PE_HOST_DEVICE virtual void set_parent(const Frame<T, ALIGNMENT>& frame) = 0;
+  PE_HOST_DEVICE virtual void set_parent(FrameBase<T, ALIGNMENT>*& parent) = 0;
   PE_HOST_DEVICE virtual htm_t<T> resolve_in_parent() const = 0;
   PE_HOST_DEVICE virtual vector_t<T, 3> resolve_in_parent(const vector_t<T, 3>& vec) const = 0;
   PE_HOST_DEVICE virtual vector_t<T, 4> resolve_in_parent(const vector_t<T, 4>& vec) const = 0;
   PE_HOST_DEVICE virtual bool operator==(const Frame<T, ALIGNMENT>& frame) = 0;
-  PE_HOST_DEVICE virtual AbsoluteFrame<T, ALIGNMENT> resolve_frame_in_global() const = 0;
-  PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> operator()() const = 0; // resolve in global frame
+  PE_HOST_DEVICE virtual htm_t<T> resolve_frame_in_global() const = 0;
+  PE_HOST_DEVICE virtual htm_t<T> operator()() const = 0; // resolve in global frame
 
   PE_HOST_DEVICE virtual AbstractRelativeFrame<T, ALIGNMENT>& operator=(const htm_t<T>& htm) = 0;
 };
