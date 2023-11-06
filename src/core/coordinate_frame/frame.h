@@ -1,12 +1,12 @@
-#ifndef C42C2054_3026_478C_82CD_E6BB0A8DD2DE
-#define C42C2054_3026_478C_82CD_E6BB0A8DD2DE
-
 /*
 @brief: Implementation of reference frames (static and moving)
 @file: frame.h
 @author: Deniz A. ACAR
 */
 
+
+#ifndef C42C2054_3026_478C_82CD_E6BB0A8DD2DE
+#define C42C2054_3026_478C_82CD_E6BB0A8DD2DE
 
 #include "../linear_transformations/homogeneous_transformation_matrix.h"
 

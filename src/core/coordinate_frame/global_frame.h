@@ -1,3 +1,9 @@
+/*
+@brief: Implementation of global reference frame
+@file: global_frame.h
+@author: Deniz A. Acar
+*/
+
 #ifndef B4E38C0D_2463_488C_A440_85CEF99DD6F0
 #define B4E38C0D_2463_488C_A440_85CEF99DD6F0
 

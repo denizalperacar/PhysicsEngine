@@ -1,3 +1,9 @@
+/*
+@brief: Implementation of absolute reference frames
+@file: absolute_frame.h
+@author: Deniz A. Acar
+*/
+
 #ifndef A07E53E3_272E_4C66_99FA_D3DE84481CC0
 #define A07E53E3_272E_4C66_99FA_D3DE84481CC0
 
@@ -73,14 +79,23 @@ struct AbsoluteFrame : public Frame<T, ALIGNMENT> {
     return htm * vec;
   }
 
+  /*
+  C^{A, B} = C^{A, G} * C^{G, B} = inverse(C^{G, A}) * C^{G, B}  
+  */
   PE_HOST_DEVICE virtual htm_t<T> operator()(const FrameBase<T, ALIGNMENT>& frame) const {
     return frame.get_htm().inverted() * htm;
   }
 
+  /*
+  C^{A, B} = C^{A, G} * C^{G, B} = inverse(C^{G, A}) * C^{G, B}  
+  */
   PE_HOST_DEVICE virtual htm_t<T> operator()(const htm_t<T>& htm) const {
     return htm.inverted() * htm;
   }
 
+  /*
+  C^{A, B} = C^{A, G} * C^{G, B} = inverse(C^{G, A}) * C^{G, B}  
+  */
   PE_HOST_DEVICE virtual AbstractAbsoluteFrame<T, ALIGNMENT>& operator=(const htm_t<T>& htm) {
     this->htm = htm;
     return *this;
