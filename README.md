@@ -23,9 +23,9 @@ The implementation of this physics engine is influenced by the following librari
 
 > - [ ] Test the code
 
-- [ ] Implement static reference frames
+- [X] Implement static reference frames
 
-> - [ ] implement tracing the frames to get their resolution in global frame
+> - [X] implement tracing the frames to get their resolution in global frame
 
 > - [ ] test the frame resolution in cuda for a large number of random frames
 

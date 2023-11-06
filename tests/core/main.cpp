@@ -1,6 +1,7 @@
 #include "../../src/core/common/pch.h"
 #include "../../src/core/coordinate_frame/relative_frame.h"
 #include "../../src/core/coordinate_frame/absolute_frame.h"
+#include "../../src/core/camera/simple_camera.h"
 
 
 #include <fstream>

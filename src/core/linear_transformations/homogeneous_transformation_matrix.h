@@ -152,6 +152,19 @@ struct htm_t {
     }
   }
 
+  PE_HOST_DEVICE void set_rotation(const vector_t<T, 3>& u1, const vector_t<T, 3>& u2, const vector_t<T, 3>& u3) {
+    matrix[0][0] = u1[0];
+    matrix[1][0] = u1[1];
+    matrix[2][0] = u1[2];
+    matrix[0][1] = u2[0];
+    matrix[1][1] = u2[1];
+    matrix[2][1] = u2[2];
+    matrix[0][2] = u3[0];
+    matrix[1][2] = u3[1];
+    matrix[2][2] = u3[2];
+
+  }
+
   PE_HOST_DEVICE htm_t<T> operator*(const htm_t<T>& rhs) const {
     return htm_t<T>(matrix * rhs.matrix);
   }
