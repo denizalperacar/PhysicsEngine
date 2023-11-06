@@ -31,6 +31,14 @@ The implementation of this physics engine is influenced by the following librari
 
 - [ ] Implement different camera models in PBRT
 
+> - [X] Simple Camera Model
+
+> - [ ] tiny cuda nn camera model
+
+> - [ ] pbrt camera models
+
+> - [ ] my own camea model for tomographic piv
+
 - [ ] Implement a simple ray tracing engine
 
 > - [ ] combine the engine with the previous code
@@ -38,3 +46,5 @@ The implementation of this physics engine is influenced by the following librari
 > - [ ] add some gui to control it.
 
 > - [ ] add rendering result directly to gui.
+
+> - [ ] add random generators
