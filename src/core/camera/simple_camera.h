@@ -14,7 +14,7 @@ class SimpleCamera {
 
 public: 
   PE_HOST_DEVICE SimpleCamera() = delete;
-  SimpleCamera(
+  PE_HOST_DEVICE SimpleCamera(
     vector_t<T, 3> lookfrom,
     vector_t<T, 3> lookat,
     vector_t<T, 3> up_vector,
@@ -39,7 +39,7 @@ public:
 
   }
 
-  ray_t<T> get_ray(T s, T t) const {
+  PE_HOST_DEVICE ray_t<T> get_ray(T s, T t) const {
 
 		vector_t<T, 3> rd = lens_radius;
 		vector_t<T, 3> offset = u_ * rd.x() + v_ * rd.y();
@@ -51,7 +51,7 @@ public:
 		);
 	}
 
-  htm_t<T> get_htm() const {
+  PE_HOST_DEVICE htm_t<T> get_htm() const {
     htm_t<T> htm;
     htm.set_position(origin);
     htm.set_rotation(u_, v_, w_);
