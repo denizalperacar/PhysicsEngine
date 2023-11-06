@@ -42,6 +42,7 @@ struct FrameBase {
   PE_HOST_DEVICE virtual htm_t<T> get_htm() const = 0;
   PE_HOST_DEVICE virtual vector_t<T, 3> get_position() const = 0;
   PE_HOST_DEVICE virtual quaternion_t<T> get_quaternion() const = 0;
+  PE_HOST_DEVICE virtual htm_t<T> resolve_frame_in_global() const = 0;
 };
 
 template <typename T, size_t ALIGNMENT>
@@ -79,7 +80,6 @@ struct AbstractRelativeFrame : public Frame<T, ALIGNMENT>{
   PE_HOST_DEVICE virtual vector_t<T, 3> resolve_in_parent(const vector_t<T, 3>& vec) const = 0;
   PE_HOST_DEVICE virtual vector_t<T, 4> resolve_in_parent(const vector_t<T, 4>& vec) const = 0;
   PE_HOST_DEVICE virtual bool operator==(const Frame<T, ALIGNMENT>& frame) = 0;
-  PE_HOST_DEVICE virtual htm_t<T> resolve_frame_in_global() const = 0;
   PE_HOST_DEVICE virtual htm_t<T> operator()() const = 0; // resolve in global frame
 
   PE_HOST_DEVICE virtual AbstractRelativeFrame<T, ALIGNMENT>& operator=(const htm_t<T>& htm) = 0;

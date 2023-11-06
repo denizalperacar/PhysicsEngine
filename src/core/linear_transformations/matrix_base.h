@@ -183,6 +183,42 @@ struct matrix_t {
 
 // matrix operation definitions
 
+// matrix vector multiplication
+template<typename T, uint32_t R, uint32_t C>
+PE_HOST_DEVICE vector_t<T, R> operator*(const matrix_t<T, R, C>& mat, const vector_t<T, C>& vec) {
+  vector_t<T, R> result((T)0.0);
+  PE_UNROLL
+  for (uint32_t i = 0; i < C; i++) {
+    PE_UNROLL
+    for (uint32_t j = 0; j < R; j++) {
+      result[j] += mat.col[i][j] * vec[i];
+    }
+  }
+  return result;
+}
+
+// matrix matrix multiplication
+template <typename T, uint32_t R, uint32_t C, uint32_t P>
+PE_HOST_DEVICE matrix_t<T, R, P> operator*(const matrix_t<T, R, C>& mat, const matrix_t<T, C, P>& other) {
+  matrix_t<T, R, P> result((T)0);
+  PE_UNROLL
+  for (uint32_t i = 0; i < P; i++) {
+    result.col[ i ] = mat * other[ i ];
+  }
+  return result;
+}
+
+// matrix vector multiplication
+template<typename T, uint32_t R, uint32_t C>
+PE_HOST_DEVICE vector_t<T, R> operator*(const vector_t<T, R>& vec, const matrix_t<T, R, C>& mat) {
+  vector_t<T, C> result((T)0.0);
+  PE_UNROLL
+  for (uint32_t i = 0; i < C; i++) {
+    result[i] = dot(mat.col[i] * vec);
+  }
+  return result;
+}
+
 // outer product
 template<typename T, uint32_t R, uint32_t C>
 PE_HOST_DEVICE matrix_t<T, R, C> outer(
@@ -228,13 +264,14 @@ ELEMENTWISE_OP(operator+, TMAT, TMAT, b[i] + b[i][j], const TVECC& a, const TMAT
 ELEMENTWISE_OP(operator+, TMAT, TMAT, b[j] + a[i][j], const TMAT& a, const TVECR& b)
 ELEMENTWISE_OP(operator+, TMAT, TMAT, b[j] + b[i][j], const TVECR& a, const TMAT& b)
 
-ELEMENTWISE_OP(operator*, TMAT, TMAT, a[i][j] * b[i][j], const TMAT& a, const TMAT& b)
+
+//ELEMENTWISE_OP(operator*, TMAT, TMAT, a[i][j] * b[i][j], const TMAT& a, const TMAT& b)
 ELEMENTWISE_OP(operator*, TMAT, TMAT, a * b[i][j], T a, const TMAT& b)
 ELEMENTWISE_OP(operator*, TMAT, TMAT, b * a[i][j], const TMAT& a, T b)
-ELEMENTWISE_OP(operator*, TMAT, TMAT, b[i] * a[i][j], const TMAT& a, const TVECC& b)
-ELEMENTWISE_OP(operator*, TMAT, TMAT, b[i] * b[i][j], const TVECC& a, const TMAT& b)
-ELEMENTWISE_OP(operator*, TMAT, TMAT, b[j] * a[i][j], const TMAT& a, const TVECR& b)
-ELEMENTWISE_OP(operator*, TMAT, TMAT, b[j] * b[i][j], const TVECR& a, const TMAT& b)
+//ELEMENTWISE_OP(operator*, TMAT, TMAT, b[i] * a[i][j], const TMAT& a, const TVECC& b)
+//ELEMENTWISE_OP(operator*, TMAT, TMAT, b[i] * b[i][j], const TVECC& a, const TMAT& b)
+//ELEMENTWISE_OP(operator*, TMAT, TMAT, b[j] * a[i][j], const TMAT& a, const TVECR& b)
+//ELEMENTWISE_OP(operator*, TMAT, TMAT, b[j] * b[i][j], const TVECR& a, const TMAT& b)
 
 ELEMENTWISE_OP(operator/, TMAT, TMAT, a[i][j] / b[i][j], const TMAT& a, const TMAT& b)
 ELEMENTWISE_OP(operator/, TMAT, TMAT, a / b[i][j], T a, const TMAT& b)

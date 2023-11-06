@@ -42,6 +42,14 @@ struct RelativeFrame : public AbstractRelativeFrame<T, ALIGNMENT> {
     this->htm = input_htm;
   }
 
+  PE_HOST_DEVICE RelativeFrame(
+      const vector_t<T, 3>& position, 
+      const quaternion_t<T>& quaternion
+  ) {  
+    this->parent = GlobalFrame<T, ALIGNMENT>::get_instance();
+    htm = htm_t<T>(quaternion, position);
+  }
+
   PE_HOST_DEVICE virtual htm_t<T> get_htm() const override {
     return htm;
   }
@@ -110,9 +118,12 @@ struct RelativeFrame : public AbstractRelativeFrame<T, ALIGNMENT> {
     return this == &frame;
   }
 
-  // TODO: implement this
   PE_HOST_DEVICE virtual htm_t<T> resolve_frame_in_global() const override {
-    htm_t<T> result_htm = htm;
+    htm_t<T> result_htm = htm; 
+    if (parent != &GlobalFrame<T, ALIGNMENT>::get_instance() and parent != nullptr) {
+      result_htm = parent->resolve_frame_in_global() * result_htm;
+      htm.print();
+    }
     return result_htm;
   }
 
@@ -130,7 +141,7 @@ struct RelativeFrame : public AbstractRelativeFrame<T, ALIGNMENT> {
   }
 
   htm_t<T> htm;
-  FrameBase<T, ALIGNMENT> *parent = nullptr;
+  FrameBase<T, ALIGNMENT> *parent = &GlobalFrame<T, ALIGNMENT>::get_instance();
 };
 
 template <typename T, size_t ALIGNMENT=sizeof(T)>

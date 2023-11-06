@@ -47,6 +47,10 @@ struct GlobalFrame : public FrameBase<T, ALIGNMENT> {
     return this == frame;
   }
 
+  PE_HOST_DEVICE htm_t<T> resolve_frame_in_global() const override {
+    return htm_t<T>();
+  }
+
 };
 
 PE_END
