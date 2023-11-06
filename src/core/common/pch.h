@@ -9,6 +9,15 @@
 #include "../linear_transformations/homogeneous_transformation_matrix.h"
 #include "../coordinate_frame/global_frame.h"
 
+// define library specific types 
 
+PE_BEGIN
+
+template <typename T, size_t A=sizeof(T)>
+using color_t = vector_t<T, 4, A>; 
+
+
+
+PE_END
 
 #endif /* F94345FF_187E_4988_B654_1C2243B316B1 */
