@@ -16,8 +16,8 @@ template <typename T, size_t A=sizeof(T)>
 using color_t = vector_t<T, 4, A>; 
 
 #define color(name, r, g, b, a) \
-template <typename T, size_t A> \
-constexpr color_t<T, A> name = color_t<T, A>{r, g, b, a};
+template <typename T, size_t A=sizeof(T)> \
+const color_t<T, A> name = color_t<T, A>{r, g, b, a};
 
 color(BLACK, 0, 0, 0, 1)
 color(WHITE, 1, 1, 1, 1)

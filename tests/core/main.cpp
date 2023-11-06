@@ -66,9 +66,11 @@ int main() {
   PE::RelativeFrame<double> ef(&rf, PE::htm_t<double>(PE::rotation_xyz(0., 0., 0., false), PE::vector_t<double, 3>(1., 2., 3.)));
 
   PE::htm_t<double> res = ef.resolve_frame_in_global();
-  print(res);
+  PE::print(res);
 
   std::cout << "Global is singelton: " << ((void*)&global_frame == (void*)&global_frame2) << std::endl;
+
+  PE::print(PE::BLUE<double>);
 
   return 0;
 }
