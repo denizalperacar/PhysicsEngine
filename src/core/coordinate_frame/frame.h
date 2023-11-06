@@ -61,15 +61,15 @@ struct Frame : public FrameBase<T, ALIGNMENT> {
 template <typename T, size_t ALIGNMENT>
 struct AbstractAbsoluteFrame : public Frame<T, ALIGNMENT>{
   using value_type = T;
-  PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> operator()(const Frame<T, ALIGNMENT>& frame) const = 0; // resolve in frame
-  PE_HOST_DEVICE virtual Frame<T, ALIGNMENT> operator()(const htm_t<T>& htm) const = 0; // resolve in frame
+  PE_HOST_DEVICE virtual htm_t<T> operator()(const FrameBase<T, ALIGNMENT>& frame) const = 0; // resolve in frame
+  PE_HOST_DEVICE virtual htm_t<T> operator()(const htm_t<T>& htm) const = 0; // resolve in frame
   PE_HOST_DEVICE virtual AbstractAbsoluteFrame<T, ALIGNMENT>& operator=(const htm_t<T>& htm) = 0;
 
 };
 
 // Forward declare the concrete Absolute Frame class
 template <typename T, size_t ALIGNMENT=sizeof(T)> 
-struct AbsoluteFrame : public AbstractAbsoluteFrame<T, ALIGNMENT> {};
+struct AbsoluteFrame;
 
 template <typename T, size_t ALIGNMENT=sizeof(T)>
 struct AbstractRelativeFrame : public Frame<T, ALIGNMENT>{

@@ -1,5 +1,7 @@
 #include "../../src/core/common/pch.h"
 #include "../../src/core/coordinate_frame/relative_frame.h"
+#include "../../src/core/coordinate_frame/absolute_frame.h"
+
 
 #include <fstream>
 
@@ -59,8 +61,8 @@ int main() {
   PE::GlobalFrame<double>& global_frame = PE::GlobalFrame<double>::get_instance();
   PE::GlobalFrame<double>& global_frame2 = PE::GlobalFrame<double>::get_instance();
 
-  PE::RelativeFrame<double> rf(&global_frame, PE::vector_t<double, 3>(1., 2., 3.), PE::quaternion_t<double>(1., 0, 0., 0.));
-  PE::RelativeFrame<double> ef(&rf, PE::vector_t<double, 3>(1., 2., 3.), PE::quaternion_t<double>(1., 0, 0., 0.));
+  PE::RelativeFrame<double> rf(&global_frame, PE::htm_t<double>(PE::rotation_xyz(90., 0., 0., false), PE::vector_t<double, 3>(1., 2., 3.)));
+  PE::RelativeFrame<double> ef(&rf, PE::htm_t<double>(PE::rotation_xyz(0., 0., 0., false), PE::vector_t<double, 3>(1., 2., 3.)));
 
   PE::htm_t<double> res = ef.resolve_frame_in_global();
   print(res);
