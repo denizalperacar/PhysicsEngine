@@ -32,7 +32,6 @@ color(DARK_GRAY, 0.25, 0.25, 0.25, 1)
 color(LIGHT_GRAY, 0.75, 0.75, 0.75, 1)
 
 #undef color
-
 PE_END
 
 #endif /* F94345FF_187E_4988_B654_1C2243B316B1 */
