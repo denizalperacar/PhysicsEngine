@@ -10,16 +10,16 @@ template <typename T, size_t A=sizeof(T)>
 class sphere : public hittable<T, A> {
 
 public:
-    PE_HOST_DEVICE sphere() = default;
-    PE_HOST_DEVICE sphere(const vector_t<T, 3, A>& center, T radius)
-        : center(center), radius(radius)
-    {}
+  PE_HOST_DEVICE sphere() = default;
+  PE_HOST_DEVICE sphere(const vector_t<T, 3, A>& center, T radius)
+      : center(center), radius(radius)
+  {}
 
-    PE_HOST_DEVICE virtual bool hit(const ray_t<T>& r, T t_min, T t_max, hit_record<T, A>& rec) const override;
+  PE_HOST_DEVICE virtual bool hit(const ray_t<T>& r, T t_min, T t_max, hit_record<T, A>& rec) const override;
 
 public:
-    vector_t<T, 3, A> center;
-    T radius;
+  vector_t<T, 3, A> center;
+  T radius;
 
 };
 
