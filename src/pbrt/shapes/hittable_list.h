@@ -6,7 +6,7 @@
 
 PE_BEGIN
 
-template <typename T, size_t A>
+template <typename T, size_t A=sizeof(T)>
 class hittable_list : public hittable<T, A> {
 public:
   hittable_list() {}
@@ -14,7 +14,7 @@ public:
 
   PE_HOST_DEVICE virtual bool hit(const ray_t<T>& r, T t_min, T t_max, hit_record<T, A>& rec) const override;
 
-  hittable<T, A>** list;
+  memory_t<hittable<T, A>*> list;
   size_t list_size;
 };
 
