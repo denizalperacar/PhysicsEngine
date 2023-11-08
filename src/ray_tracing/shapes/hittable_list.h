@@ -1,7 +1,7 @@
 #ifndef DB914FD3_96F8_4AB0_A66A_A184264CFC75
 #define DB914FD3_96F8_4AB0_A66A_A184264CFC75
 
-#include "../../core/common/pch.h"
+#include "pch.h"
 #include "hittable.h"
 
 PE_BEGIN

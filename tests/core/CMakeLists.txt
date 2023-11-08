@@ -14,7 +14,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/../../src/")
 set(CORE_DIR   "${SOURCE_DIR}/core/")
 set(COMMON_DIR "${CORE_DIR}/common/")
-set(VECTOR_DIR "${CORE_DIR}/vector/")
+set(VECTOR_DIR "${CORE_DIR}/linear_transformations/")
+set(PCH_DIR   "${CMAKE_SOURCE_DIR}/../../include/")
 
 file(GLOB cpu_source_files 
   "${CMAKE_SOURCE_DIR}/main.cpp"
@@ -38,7 +39,7 @@ else()
   target_link_libraries(physics_engine fmt::fmt)
 endif()
 
-target_include_directories(physics_engine PRIVATE "/usr/local/cuda/include/" "${COMMON_DIR}")  
+target_include_directories(physics_engine PRIVATE "/usr/local/cuda/include/" "${COMMON_DIR}" ${PCH_DIR} ${VECTOR_DIR})  
 
 # Specify the precompiled header file
 
@@ -47,7 +48,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-variable -Wno-unused-but-set
 target_link_libraries(physics_engine fmt::fmt)
 message(STATUS "USE_CUDA: ${USE_CUDA}")
 
-target_precompile_headers(physics_engine PRIVATE "${COMMON_DIR}/pch.h")
+target_precompile_headers(physics_engine PRIVATE "${PCH_DIR}/pch.h")
 
 if(USE_CUDA)
     add_definitions(-DUSE_CUDA)

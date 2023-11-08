@@ -1,14 +1,13 @@
+#ifndef C8D185FE_FC90_4372_85E7_649049D9DA4B
+#define C8D185FE_FC90_4372_85E7_649049D9DA4B
+
 /*
 @brief: Implementation of relative reference frames
 @file: relative_frame.h
 @author: Deniz A. ACAR
 */
 
-
-#ifndef C8D185FE_FC90_4372_85E7_649049D9DA4B
-#define C8D185FE_FC90_4372_85E7_649049D9DA4B
-
-#include "../common/pch.h"
+#include "pch.h"
 
 PE_BEGIN
 

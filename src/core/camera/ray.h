@@ -1,7 +1,8 @@
 #ifndef B1AB7642_6C36_4D30_B8E7_5911833C7AA4
 #define B1AB7642_6C36_4D30_B8E7_5911833C7AA4
 
-#include "../common/pch.h"
+#include "common.h"
+#include "vector_base.h"
 
 PE_BEGIN
 

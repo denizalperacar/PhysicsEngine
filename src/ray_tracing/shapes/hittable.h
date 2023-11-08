@@ -2,8 +2,7 @@
 #define C61C8CB2_0C74_441C_8759_C05BA7E43E8B
 
 
-#include "../../core/common/pch.h"
-#include "../../core/camera/ray.h"
+#include "pch.h"
 
 PE_BEGIN
 

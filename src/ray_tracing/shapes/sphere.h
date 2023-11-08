@@ -1,7 +1,7 @@
 #ifndef BE1B4E77_37A2_4D92_A1F3_9225DDDDE9CD
 #define BE1B4E77_37A2_4D92_A1F3_9225DDDDE9CD
 
-#include "../../core/common/pch.h"
+#include "pch.h"
 #include "hittable.h"
 
 PE_BEGIN

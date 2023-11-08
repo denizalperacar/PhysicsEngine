@@ -1,7 +1,7 @@
 #ifndef B0AF69A6_577B_4BF9_AF88_BB09112AEE6E
 #define B0AF69A6_577B_4BF9_AF88_BB09112AEE6E
 
-#include "../common/common.h"
+#include "common.h"
 #include "rotation_dyads.h"
 
 /*

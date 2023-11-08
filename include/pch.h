@@ -1,13 +1,14 @@
 #ifndef F94345FF_187E_4988_B654_1C2243B316B1
 #define F94345FF_187E_4988_B654_1C2243B316B1
 
-#include "common.h"
-#include "../linear_transformations/vector_base.h"
-#include "../linear_transformations/matrix_base.h"
-#include "../linear_transformations/rotation_dyads.h"
-#include "../linear_transformations/quaternion.h"
-#include "../linear_transformations/homogeneous_transformation_matrix.h"
-#include "../coordinate_frame/global_frame.h"
+#include "../src/core/common/common.h"
+#include "../src/core/linear_transformations/vector_base.h"
+#include "../src/core/linear_transformations/matrix_base.h"
+#include "../src/core/linear_transformations/rotation_dyads.h"
+#include "../src/core/linear_transformations/quaternion.h"
+#include "../src/core/linear_transformations/homogeneous_transformation_matrix.h"
+#include "../src/core/coordinate_frame/global_frame.h"
+#include "../src/core/camera/ray.h"
 
 // define project specific types 
 PE_BEGIN

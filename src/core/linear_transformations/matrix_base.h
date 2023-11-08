@@ -1,7 +1,7 @@
 #ifndef E92BA02D_8498_40BC_85B5_DAED223969ED
 #define E92BA02D_8498_40BC_85B5_DAED223969ED
 
-#include "../common/common.h"
+#include "common.h"
 #include "vector_base.h"
 
 

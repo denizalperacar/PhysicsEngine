@@ -2,8 +2,7 @@
 #define E580B530_A848_44ED_9E06_A7AAEF3057CE
 
 
-#include "../common/pch.h"
-#include "../coordinate_frame/absolute_frame.h"
+#include "pch.h"
 #include "ray.h"
 
 
