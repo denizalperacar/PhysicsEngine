@@ -36,8 +36,11 @@ PE_BEGIN
 	#define PE_NO_UNROLL 
 #endif
 
+// aliases
+#define PE_HTD cudaMemcpyHostToDevice
+#define PE_DTH cudaMemcpyDeviceToHost
+#define PE_DTD cudaMemcpyDeviceToDevice
 
-#define PE_VECTOR
 
 PE_END
 

@@ -24,6 +24,7 @@
 #include <chrono>
 #include <cstdint>
 #include <algorithm>
+#include <atomic>
 
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
