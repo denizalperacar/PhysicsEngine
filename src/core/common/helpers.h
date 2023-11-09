@@ -9,28 +9,27 @@ PE_BEGIN
 
 #if defined(__NVCC__) || (defined(__clang__) && defined(__CUDA__))
 	#define PE_GLOBAL __global__
+	#define PE_KERNEL __global__
 	#define PE_HOST_DEVICE __host__ __device__
 	#define PE_HOST __host__
 	#define PE_DEVICE __device__
 	#define PE_SHARED __shared__
 	#define PE_CONST __constant__
+	#define PE_FORCE_INLINE __forceinline__
 #else 
 	#define PE_GLOBAL 
+	#define PE_KERNEL
 	#define PE_HOST_DEVICE 
 	#define PE_HOST 
 	#define PE_DEVICE 
 	#define PE_SHARED 
 	#define PE_CONST 
+	#define PE_FORCE_INLINE inline
 #endif
 
 #if defined(__CUDA_ARCH__)
-	#if defined(__CUDACC_RTC__) || (defined(__clang__) && defined(__CUDA__))
-		#define PE_UNROLL _Pragma("unroll")
-		#define PE_NO_UNROLL _Pragma("unroll 1")
-	#else
-		#define PE_UNROLL #pragma unroll
-		#define PE_NO_UNROLL #pragma unroll 1
-	#endif
+	#define PE_UNROLL _Pragma("unroll")
+	#define PE_NO_UNROLL _Pragma("unroll 1")
 #else
 	#define PE_UNROLL 
 	#define PE_NO_UNROLL 

@@ -111,7 +111,7 @@ public:
   template <typename...Tn, typename = enable_if_size_and_type_match_t<DIM, T, Tn...>>
   PE_HOST_DEVICE vector_t(Tn... values) : elements{values...} {}
   PE_HOST_DEVICE vector_t(std::initializer_list<T> values) {
-    assert(values.size() == DIM, "Initializer list size does not match vector size");
+    static_assert(values.size() == DIM, "Initializer list size does not match vector size");
     std::copy(values.begin(), values.end(), elements);
   }
 };

@@ -2,7 +2,8 @@
 #define F94345FF_187E_4988_B654_1C2243B316B1
 
 #include "../src/core/common/common.h"
-#include "../src/core/memory/device_memory.h"
+#include "../src/core/cuda/memory/device_memory.h"
+#include "../src/core/cuda/functions/parallel_for.h"
 #include "../src/core/linear_transformations/vector_base.h"
 #include "../src/core/linear_transformations/matrix_base.h"
 #include "../src/core/linear_transformations/rotation_dyads.h"

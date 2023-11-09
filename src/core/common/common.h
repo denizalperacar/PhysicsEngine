@@ -60,6 +60,26 @@ PE_HOST_DEVICE inline T radians_to_degrees(T rad) {
 	return rad * 180.f / pi;
 }
 
+constexpr uint32_t NUM_THREADS_1D = NUM_THREADS_128; 
+
+template <typename T>
+constexpr PE_HOST_DEVICE uint32_t n_blocks1d(T n_elements, uint32_t n_threads = NUM_THREADS_1D) {
+	return (n_elements + n_threads - 1) / n_threads;
+}
+
+// temporary image save file
+
+typedef void (*writeOneByte)(unsigned char);
+// output file
+std::ofstream myFile("../result.jpg", std::ios_base::out | std::ios_base::binary);
+
+// Image properties
+constexpr float DEFAULT_IMAGE_ASPECT_RATIO = 16.0f / 9.0f;
+constexpr uint32_t DEFAULT_IMAGE_WIDTH = 1920;
+constexpr int DEFAULT_IMAGE_HEIGHT = static_cast<int>(DEFAULT_IMAGE_WIDTH / DEFAULT_IMAGE_ASPECT_RATIO);
+constexpr uint32_t DEFAULT_NUMBER_OF_PIXELS = DEFAULT_IMAGE_WIDTH * DEFAULT_IMAGE_HEIGHT;
+
+
 PE_END
 
 

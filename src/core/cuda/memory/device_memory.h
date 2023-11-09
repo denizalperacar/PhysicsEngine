@@ -50,7 +50,7 @@ public:
     return *this;
   }
 
-  operator=(memory_t<U>&& obj) {
+  void operator=(memory_t<U>&& obj) {
     *this = move(obj);
   }
 
