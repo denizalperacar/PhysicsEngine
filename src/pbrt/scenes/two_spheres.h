@@ -8,7 +8,7 @@
 PE_BEGIN
 
 template <typename T>
-PE_KERNEL void two_spheres(hittable** list, hittable** world) {
+PE_KERNEL void two_spheres(hittable<T>** list, hittable<T>** world) {
 	
 	uint32_t i = 0;
 	list[i++] = new sphere<T>(vector_t<T, 3>(0.f, 0.f, -1.0f), 0.5f);
