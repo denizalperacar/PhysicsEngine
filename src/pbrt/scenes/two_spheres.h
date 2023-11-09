@@ -13,7 +13,7 @@ PE_KERNEL void two_spheres(hittable<T>** list, hittable<T>** world) {
 	uint32_t i = 0;
 	list[i++] = new sphere<T>(vector_t<T, 3>(0.f, 0.f, -1.0f), 0.5f);
 	list[i++] = new sphere<T>(vector_t<T, 3>(0.f, -100.5f, -1.f), 100.f);
-	*world = new hittable_list(list, i);
+	*world = new hittable_list<T>(list, i);
 }
 
 PE_END

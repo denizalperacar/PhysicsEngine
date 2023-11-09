@@ -9,8 +9,8 @@ PE_BEGIN
 template <typename T, size_t A=sizeof(T)>
 class hittable_list : public hittable<T, A> {
 public:
-  hittable_list() {}
-  hittable_list(hittable<T, A>** l, size_t n) : list(l), list_size(n) {}
+  PE_HOST_DEVICE hittable_list() {}
+  PE_HOST_DEVICE hittable_list(hittable<T, A>** l, size_t n) : list(l), list_size(n) {}
 
   PE_HOST_DEVICE virtual bool hit(const ray_t<T>& r, T t_min, T t_max, hit_record<T, A>& rec) const override;
 
