@@ -27,9 +27,9 @@ public:
 template <typename T, size_t A>
 PE_HOST_DEVICE bool sphere<T, A>::hit(const ray_t<T>& r, T t_min, T t_max, hit_record<T, A>& rec) const {
 	vector_t<T, 3, A> oc = r.origin() - center;
-	auto a = length_squared(r.direction());
+	auto a = length2(r.direction());
 	auto half_b = dot(oc, r.direction());
-	auto c = length_squared(oc) - radius * radius;
+	auto c = length2(oc) - radius * radius;
 
 	auto discriminant = half_b * half_b - a * c;
 	if (discriminant < 0) return false;
@@ -53,9 +53,9 @@ PE_HOST_DEVICE bool sphere<T, A>::hit(const ray_t<T>& r, T t_min, T t_max, hit_r
 template <typename T, size_t A=sizeof(T)>
 PE_HOST_DEVICE T hit_sphere(const vector_t<T, 3, A>& center, T radius, const ray_t<T>& r) {
   vector_t<T, 3, A> oc = r.origin() - center;
-  auto a = length_squared(r.direction());
+  auto a = length2(r.direction());
   auto half_b = dot(oc, r.direction());
-  auto c = length_squared(oc) - radius * radius;
+  auto c = length2(oc) - radius * radius;
   auto discriminant = half_b * half_b - a * c;
 
   return (discriminant < 0) * (T)-1. + (discriminant >= 0) * (-half_b - sqrt(discriminant)) / a;

@@ -34,8 +34,8 @@ PE_KERNEL void renderer(render_color* result, hittable<T>** world) {
       auto u = (T)((i) / (DEFAULT_IMAGE_WIDTH - 1));
       auto v = (T)((DEFAULT_IMAGE_HEIGHT - j) / (DEFAULT_IMAGE_HEIGHT - 1));
       ray_t<T> r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
-      vector_t<T, 3> pixel_color = ray_color(r, *world);
-      result[idx] = get_color(pixel_color, 1);
+      vector_t<T, 3> pixel_color = ray_color<T>(r, *world);
+      result[idx] = get_color<T>(pixel_color, 1);
       //c.print();
 	}
 }
@@ -67,7 +67,7 @@ void render_manager() {
 	dim3 block(NUM_THREADS_MIN, NUM_THREADS_MIN);
 
 	
-	render << < grid, block >> > (device_ptr.data(), world.data());
+	renderer << < grid, block >> > (device_ptr.data(), world.data());
 	std::vector<render_color> host_ptr(DEFAULT_IMAGE_WIDTH * DEFAULT_IMAGE_HEIGHT);
 	device_ptr.copy_to_host(host_ptr);
 

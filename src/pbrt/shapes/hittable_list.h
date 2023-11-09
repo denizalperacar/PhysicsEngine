@@ -14,7 +14,7 @@ public:
 
   PE_HOST_DEVICE virtual bool hit(const ray_t<T>& r, T t_min, T t_max, hit_record<T, A>& rec) const override;
 
-  memory_t<hittable<T, A>*> list;
+  hittable<T, A>** list;
   size_t list_size;
 };
 

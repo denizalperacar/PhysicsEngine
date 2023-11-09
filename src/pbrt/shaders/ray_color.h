@@ -7,16 +7,16 @@
 PE_BEGIN
 
 template <typename T>
-PE_HOST_DEVICE vector_t<T, 3> ray_color(const ray_t<T>& r, memory_t<hittable<T>*> world) {
+PE_HOST_DEVICE vector_t<T, 3> ray_color(const ray_t<T>& r, hittable<T>* world) {
 
   hit_record<T> rec;
 
   if (world->hit(r, 0, infinity, rec)) {
-    return 0.5f * (rec.normal + vector_t<T, 3>((T)1));
+    return (T)0.5f * (rec.normal + vector_t<T, 3>((T)1));
   }
 
-  vector_t<T, 3> unit_direction = unit_vector(r.direction());
-  T t = (T)0.5 * (unit_direction.y() + (T)1.0);
+  vector_t<T, 3> unit_direction = normalize(r.direction());
+  T t = (T)0.5 * (unit_direction.y + (T)1.0);
   return ((T)1.0 - t) * vector_t<T, 3>((T)1.0) + t * vector_t<T, 3>((T)0.5, (T)0.7, (T)1.0);
 
 }
