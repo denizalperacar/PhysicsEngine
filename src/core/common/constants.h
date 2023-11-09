@@ -9,6 +9,7 @@ PE_BEGIN
 
 // constants
 constexpr double pi = 3.14159265358979323846;
+constexpr float infinity = std::numeric_limits<float>::infinity();
 
 // Thread constants
 constexpr uint32_t NUM_THREADS_MIN = 32;

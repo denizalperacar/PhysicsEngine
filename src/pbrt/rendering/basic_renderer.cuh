@@ -7,6 +7,7 @@
 #include "../shaders/get_color.h"
 #include "../shaders/ray_color.h"
 #include "../../../dependencies/toojpeg/toojpeg.h"
+#include "../scenes/two_spheres.h"
 
 PE_BEGIN
 
@@ -23,17 +24,17 @@ PE_KERNEL void renderer(render_color* result, hittable<T>** world) {
       auto viewport_width = DEFAULT_IMAGE_ASPECT_RATIO * viewport_height;
       auto focal_length = 1.0f;
 
-      auto origin = point3f(0.f, 0.f, 0.f);
-      auto horizontal = vec3f(viewport_width, 0.f, 0.f);
-      auto vertical = vec3f(0, viewport_height, 0.f);
-      auto lower_left_corner = origin - horizontal / 2.f - vertical / 2.f - vec3f(0.f, 0.f, focal_length);
+      auto origin = vector_t<T, 3>(0.f, 0.f, 0.f);
+      auto horizontal = vector_t<T, 3>(viewport_width, 0.f, 0.f);
+      auto vertical = vector_t<T, 3>(0, viewport_height, 0.f);
+      auto lower_left_corner = origin - horizontal / (T)2.f - vertical / (T)2.f - vector_t<T, 3>((T)0.f, (T)0.f, focal_length);
 
 
       render_color c;
-      auto u = T(i) / (DEFAULT_IMAGE_WIDTH - 1);
-      auto v = T(DEFAULT_IMAGE_HEIGHT - j) / (DEFAULT_IMAGE_HEIGHT - 1);
-      ray r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
-      color3f pixel_color = ray_color(r, *world);
+      auto u = (T)((i) / (DEFAULT_IMAGE_WIDTH - 1));
+      auto v = (T)((DEFAULT_IMAGE_HEIGHT - j) / (DEFAULT_IMAGE_HEIGHT - 1));
+      ray_t<T> r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
+      vector_t<T, 3> pixel_color = ray_color(r, *world);
       result[idx] = get_color(pixel_color, 1);
       //c.print();
 	}

@@ -44,7 +44,7 @@ PE_HOST_DEVICE bool sphere<T, A>::hit(const ray_t<T>& r, T t_min, T t_max, hit_r
 
 	rec.t = root;
 	rec.p = r.at(rec.t);
-	vec3f outward_normal = (rec.p - center) / radius;
+	vector_t<T, 3, A> outward_normal = (rec.p - center) / radius;
 	rec.set_face_normal(r, outward_normal);
 
 	return true;
@@ -63,7 +63,7 @@ PE_HOST_DEVICE T hit_sphere(const vector_t<T, 3, A>& center, T radius, const ray
 
 template <typename T, size_t A=sizeof(T)>
 PE_HOST_DEVICE T hit_sphere_normal_coloring(const vector_t<T, 3, A>& center, T radius, const ray_t<T>& r) {
-  vec3f oc = r.origin() - center;
+  vector_t<T, 3, A> oc = r.origin() - center;
   auto a = dot(r.direction(), r.direction());
   auto b = 2.0 * dot(oc, r.direction());
   auto c = dot(oc, oc) - radius * radius;

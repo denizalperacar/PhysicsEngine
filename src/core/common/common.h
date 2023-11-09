@@ -73,6 +73,13 @@ typedef void (*writeOneByte)(unsigned char);
 // output file
 std::ofstream myFile("../result.jpg", std::ios_base::out | std::ios_base::binary);
 
+// write a single byte compressed by tooJpeg
+void image_output(unsigned char byte)
+{
+	myFile << byte;
+}
+
+
 // Image properties
 constexpr float DEFAULT_IMAGE_ASPECT_RATIO = 16.0f / 9.0f;
 constexpr uint32_t DEFAULT_IMAGE_WIDTH = 1920;
