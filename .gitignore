@@ -34,3 +34,4 @@
 tests/core/build/*
 tests/pbrt/build/*
 packages/*
+tests/core/result.jpg

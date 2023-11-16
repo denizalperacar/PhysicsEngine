@@ -4,6 +4,7 @@
 
 #include "namespaces.h"
 #include "cstdint"
+#include <limits>
 
 PE_BEGIN
 

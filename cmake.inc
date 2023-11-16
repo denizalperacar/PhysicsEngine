@@ -11,6 +11,8 @@ set(VECTOR_DIR "${CORE_DIR}/linear_transformations/")
 set(PCH_DIR    "${ROOT_DIR}/include/")
 set(JPEG_DIR   "${ROOT_DIR}/dependencies/toojpeg/")
 
+message("-- PCH_DIR" ${PCH_DIR})
+
 file(GLOB cpu_source_files 
   "${CMAKE_SOURCE_DIR}/main.c*"
   "${SOURCE_DIR}/*.cpp" 
@@ -35,7 +37,8 @@ target_include_directories(physics_engine PRIVATE "/usr/local/cuda/include/" "${
 
 # Specify the precompiled header file
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-variable -Wno-unused-but-set-variable" )
+set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -Wno-unused-variable -Wno-unused-but-set-variable" )
+
 
 target_link_libraries(physics_engine fmt::fmt)
 message(STATUS "USE_CUDA: ${USE_CUDA}")
