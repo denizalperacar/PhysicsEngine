@@ -12,6 +12,7 @@ PE_HOST_DEVICE vector_t<T, 3> ray_color(const ray_t<T>& r, hittable<T>* world) {
   hit_record<T> rec;
 
   if (world->hit(r, 0, infinity, rec)) {
+    vector_t<T, 3> res = (T)0.5f * (rec.normal + vector_t<T, 3>((T)1));
     return (T)0.5f * (rec.normal + vector_t<T, 3>((T)1));
   }
 

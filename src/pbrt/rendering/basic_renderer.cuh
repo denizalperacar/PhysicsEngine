@@ -6,7 +6,6 @@
 #include "../shapes/hittable_list.h"
 #include "../shaders/get_color.h"
 #include "../shaders/ray_color.h"
-#include "../../../dependencies/toojpeg/toojpeg.h"
 #include "../scenes/two_spheres.h"
 
 PE_BEGIN
@@ -29,14 +28,12 @@ PE_KERNEL void renderer(render_color* result, hittable<T>** world) {
       auto vertical = vector_t<T, 3>(0, viewport_height, 0.f);
       auto lower_left_corner = origin - horizontal / (T)2.f - vertical / (T)2.f - vector_t<T, 3>((T)0.f, (T)0.f, focal_length);
 
-
       render_color c;
-      auto u = (T)((i) / (DEFAULT_IMAGE_WIDTH - 1));
-      auto v = (T)((DEFAULT_IMAGE_HEIGHT - j) / (DEFAULT_IMAGE_HEIGHT - 1));
+      auto u = ((T)(i) / (T)(DEFAULT_IMAGE_WIDTH - 1));
+      auto v = ((T)(DEFAULT_IMAGE_HEIGHT - j) / (T)(DEFAULT_IMAGE_HEIGHT - 1));
       ray_t<T> r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
       vector_t<T, 3> pixel_color = ray_color<T>(r, *world);
       result[idx] = get_color<T>(pixel_color, 1);
-      //c.print();
 	}
 }
 
@@ -71,7 +68,7 @@ void render_manager() {
 	std::vector<render_color> host_ptr(DEFAULT_IMAGE_WIDTH * DEFAULT_IMAGE_HEIGHT);
 	device_ptr.copy_to_host(host_ptr);
 
-	auto ok = TooJpeg::writeJpeg(image_output, host_ptr.data(), DEFAULT_IMAGE_WIDTH, DEFAULT_IMAGE_HEIGHT, true, 90, false);
+	auto ok = true; // TooJpeg::writeJpeg(image_output, host_ptr.data(), DEFAULT_IMAGE_WIDTH, DEFAULT_IMAGE_HEIGHT, true, 90, false);
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
 	if (ok) {
