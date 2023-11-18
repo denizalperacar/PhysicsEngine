@@ -39,9 +39,23 @@ int render_manager() {
 	);
 	dim3 block(NUM_THREADS_MIN, NUM_THREADS_MIN);
 
+	std::cout << image.size() << std::endl;
   // update renderer
-  renderer<<<grid, block>>>(image.data(), world.data());
+  renderer<<<grid, block>>>(image, world.data());
 
+	glfw_window display_window;
+	init_glew();
+	init_texture();
+
+	while (!glfwWindowShouldClose(display_window.window)) {
+		display_window.display(image);
+	}
+
+	// Cleanup resources
+	cudaGraphicsUnregisterResource(cudaResource);
+	glDeleteTextures(1, &glTexture);
+	glfwDestroyWindow(display_window.window);
+	glfwTerminate();
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	std::cout << "Time taken to render the image: " 

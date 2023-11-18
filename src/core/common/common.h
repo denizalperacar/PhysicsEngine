@@ -75,9 +75,9 @@ constexpr PE_HOST_DEVICE uint32_t n_blocks1d(T n_elements, uint32_t n_threads = 
 
 
 // Image properties
-constexpr float DEFAULT_IMAGE_ASPECT_RATIO = 16.0f / 9.0f;
+constexpr float DEFAULT_IMAGE_ASPECT_RATIO = 4.0f / 3.0f;
 constexpr uint32_t DEFAULT_IMAGE_WIDTH = 800;
-constexpr int DEFAULT_IMAGE_HEIGHT = static_cast<int>(DEFAULT_IMAGE_WIDTH / DEFAULT_IMAGE_ASPECT_RATIO);
+constexpr uint32_t DEFAULT_IMAGE_HEIGHT = static_cast<uint32_t>((float)DEFAULT_IMAGE_WIDTH / DEFAULT_IMAGE_ASPECT_RATIO);
 constexpr uint32_t DEFAULT_NUMBER_OF_PIXELS = DEFAULT_IMAGE_WIDTH * DEFAULT_IMAGE_HEIGHT;
 
 GLuint glTexture;

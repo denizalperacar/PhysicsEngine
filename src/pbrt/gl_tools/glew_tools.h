@@ -5,7 +5,7 @@
 
 PE_BEGIN
 
-void initGLEW() {
+void init_glew() {
     // Initialize GLEW
     GLenum err = glewInit();
     if (err != GLEW_OK) {

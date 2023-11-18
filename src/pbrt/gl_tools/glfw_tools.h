@@ -24,12 +24,12 @@ class glfw_window{
 public:
 
   glfw_window(){
-    initGLFW();
+    init_glfw();
     // window = glfwGetCurrentContext();
     printGLFWInfo(window);
   }
 
-  void initGLFW() {
+  void init_glfw() {
     // Initialize GLFW
     if (!glfwInit()) {
         fprintf(stderr, "Failed to initialize GLFW\n");
@@ -48,7 +48,7 @@ public:
   }
 
 
-  void display(memory_t<uchar4> device_data) {
+  void display(memory_t<uchar4>& device_data) {
     // Map the CUDA resource to get a device pointer
     uchar4* cudaPtr;
     size_t size;

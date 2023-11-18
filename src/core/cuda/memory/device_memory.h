@@ -67,11 +67,11 @@ public:
 		return device_ptr;
 	}
 
-  size_t get_num_elements() const {
+  PE_HOST_DEVICE size_t get_num_elements() const {
 		return m_size;
 	}
 
-	size_t size() const {
+	PE_HOST_DEVICE size_t size() const {
 		return get_num_elements();
 	}
 

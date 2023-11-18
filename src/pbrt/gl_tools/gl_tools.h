@@ -16,7 +16,7 @@ void printGLInfo(){
 }
 
 
-void initTexture() {
+void init_texture() {
     glGenTextures(1, &glTexture);
     glBindTexture(GL_TEXTURE_2D, glTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, DEFAULT_IMAGE_WIDTH, DEFAULT_IMAGE_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
