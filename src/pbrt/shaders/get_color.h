@@ -21,7 +21,8 @@ PE_HOST_DEVICE uchar4 get_color(vector_t<T, 3>& pixel_color, int samples_per_pix
 	r *= scale;
 	g *= scale;
 	b *= scale;
-	c = make_uchar4((uint8_t)(255.999 * r), (uint8_t)(255.999 * g), (uint8_t)(255.999 * b), (uint8_t)255);
+	// c = make_uchar4((uint8_t)(255.999 * r), (uint8_t)(255.999 * g), (uint8_t)(255.999 * b), (uint8_t)255);
+	c = make_uchar4(1,0,0,1);
 	return c;
 }
 

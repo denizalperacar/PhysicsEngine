@@ -1,0 +1,21 @@
+#ifndef C14D0843_5C0E_4046_8789_53BBA9A66D59
+#define C14D0843_5C0E_4046_8789_53BBA9A66D59
+
+#include "pch.h"
+
+PE_BEGIN
+
+
+void configure_display() {
+  // GLFW
+  GLFWwindow* window;
+  int WIDTH = DEFAULT_IMAGE_WIDTH;
+  int HEIGHT = DEFAULT_IMAGE_HEIGHT;
+
+  
+}
+
+
+PE_END
+
+#endif /* C14D0843_5C0E_4046_8789_53BBA9A66D59 */
