@@ -30,6 +30,11 @@
 #include <device_launch_parameters.h>
 #include <cuda.h>
 #include <cuda_fp16.h>
+
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <cuda_gl_interop.h>
+
 #include "fmt/core.h"
 
 #include <cstddef>
@@ -67,17 +72,6 @@ constexpr PE_HOST_DEVICE uint32_t n_blocks1d(T n_elements, uint32_t n_threads = 
 	return (n_elements + n_threads - 1) / n_threads;
 }
 
-// temporary image save file
-
-typedef void (*writeOneByte)(unsigned char);
-// output file
-std::ofstream myFile("../result.jpg", std::ios_base::out | std::ios_base::binary);
-
-// write a single byte compressed by tooJpeg
-void image_output(unsigned char byte)
-{
-	myFile << byte;
-}
 
 
 // Image properties

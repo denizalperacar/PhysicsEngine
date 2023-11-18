@@ -7,11 +7,13 @@
 #include "../shaders/get_color.h"
 #include "../shaders/ray_color.h"
 #include "../scenes/two_spheres.h"
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 PE_BEGIN
 
 template <typename T=float>
-PE_KERNEL void renderer(render_color* result, hittable<T>** world) {
+PE_KERNEL void renderer(cudaSurfaceObject_t surface_object, hittable<T>** world) {
   	uint32_t i = threadIdx.x + blockDim.x * blockIdx.x;
     uint32_t j = threadIdx.y + blockDim.y * blockIdx.y;
     uint32_t idx = j * gridDim.x * blockDim.x + i;
@@ -33,16 +35,15 @@ PE_KERNEL void renderer(render_color* result, hittable<T>** world) {
       auto v = ((T)(DEFAULT_IMAGE_HEIGHT - j) / (T)(DEFAULT_IMAGE_HEIGHT - 1));
       ray_t<T> r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
       vector_t<T, 3> pixel_color = ray_color<T>(r, *world);
-      result[idx] = get_color<T>(pixel_color, 1);
+      surf2Dwrite(get_color<T>(pixel_color, 1), surface_object, i * sizeof(uchar4), j);
 	}
 }
 
 
 template <typename T>
-void render_manager() {
+memory_t<render_color> render_manager() {
 
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-	
 	
 	// configure the scene
 	int max_object_count = 200;
@@ -64,24 +65,13 @@ void render_manager() {
 	dim3 block(NUM_THREADS_MIN, NUM_THREADS_MIN);
 
 	
-	renderer << < grid, block >> > (device_ptr.data(), world.data());
-	std::vector<render_color> host_ptr(DEFAULT_IMAGE_WIDTH * DEFAULT_IMAGE_HEIGHT);
-	device_ptr.copy_to_host(host_ptr);
-
-	auto ok = true; // TooJpeg::writeJpeg(image_output, host_ptr.data(), DEFAULT_IMAGE_WIDTH, DEFAULT_IMAGE_HEIGHT, true, 90, false);
+	renderer << < grid, block >> > (device_ptr.data(), world.data());	
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-
-	if (ok) {
-		std::cout << "Image saved successfully" << std::endl;
-	}
-	else {
-		std::cout << "Error in saving image" << std::endl;
-	}
-
 	std::cout << "Time taken to render the image: " 
 		<< std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() 
 		<< " ms" << std::endl;
 	
+	return device_ptr; 
 }
 
 PE_END

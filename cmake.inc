@@ -1,5 +1,9 @@
 option(USE_CUDA "Use CUDA" ON)
 find_package(fmt REQUIRED)
+find_package(OpenGL REQUIRED)
+find_package(glfw3 REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(OpenGL REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -37,15 +41,16 @@ target_include_directories(physics_engine PRIVATE "/usr/local/cuda/include/" "${
 
 # Specify the precompiled header file
 
-set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -Wno-unused-variable -Wno-unused-but-set-variable" )
+set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -Wno-unused-variable -Wno-unused-but-set-variable -lglfw -lglfw3 -lglew -lGL -lm -lX11 -lpthread -lXi -lXrandr -ldl" )
 
 
-target_link_libraries(physics_engine fmt::fmt)
+target_link_libraries(physics_engine fmt::fmt glfw GLEW::GLEW OpenGL::OpenGL)
+
 message(STATUS "USE_CUDA: ${USE_CUDA}")
 
 target_precompile_headers(physics_engine PRIVATE "${PCH_DIR}/pch.h")
 
-set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xcudafe --diag_suppress=20012 -w")
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xcudafe --diag_suppress=20012 -w -lglfw -lglfw3 -lglew -lGL -lm -lX11 -lpthread -lXi -lXrandr -ldl")
 
 if(USE_CUDA)
   set_property(TARGET physics_engine PROPERTY CUDA_ARCHITECTURES 60)

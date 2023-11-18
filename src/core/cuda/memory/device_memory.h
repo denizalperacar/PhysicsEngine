@@ -54,7 +54,10 @@ public:
     *this = move(obj);
   }
 
-  memory_t<U>& operator=(memory_t<U>& obj) = delete;
+  memory_t(memory_t<U>& obj) {
+    std::swap(device_ptr, obj.device_ptr);
+    std::swap(m_size, obj.m_size);
+  }
 
   explicit memory_t(const memory_t<U>& obj) {
 		copy_from_device(obj);

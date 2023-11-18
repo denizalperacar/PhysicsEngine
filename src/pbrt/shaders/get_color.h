@@ -7,9 +7,11 @@
 PE_BEGIN
 
 template <typename T>
-PE_HOST_DEVICE render_color get_color(vector_t<T, 3>& pixel_color, int samples_per_pixel) {
+PE_HOST_DEVICE uchar4 get_color(vector_t<T, 3>& pixel_color, int samples_per_pixel) {
 	// writes the mapped [0, 255] value of each colow componenet
   // TODO reimplement a more efficient version of this
+	uchar4 c;
+
 	T r = pixel_color.r;
 	T g = pixel_color.g;
 	T b = pixel_color.b;
@@ -19,15 +21,8 @@ PE_HOST_DEVICE render_color get_color(vector_t<T, 3>& pixel_color, int samples_p
 	r *= scale;
 	g *= scale;
 	b *= scale;
-
-	render_color c;
-
-	c.r = (uint8_t)(255.999 * r);
-	c.g = (uint8_t)(255.999 * g);
-	c.b = (uint8_t)(255.999 * b);
-
+	c = make_uchar4((uint8_t)(255.999 * r), (uint8_t)(255.999 * g), (uint8_t)(255.999 * b), (uint8_t)255);
 	return c;
-	
 }
 
 PE_END
