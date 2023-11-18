@@ -80,6 +80,9 @@ constexpr uint32_t DEFAULT_IMAGE_WIDTH = 800;
 constexpr int DEFAULT_IMAGE_HEIGHT = static_cast<int>(DEFAULT_IMAGE_WIDTH / DEFAULT_IMAGE_ASPECT_RATIO);
 constexpr uint32_t DEFAULT_NUMBER_OF_PIXELS = DEFAULT_IMAGE_WIDTH * DEFAULT_IMAGE_HEIGHT;
 
+GLuint glTexture;
+cudaGraphicsResource* cudaResource;
+
 
 PE_END
 

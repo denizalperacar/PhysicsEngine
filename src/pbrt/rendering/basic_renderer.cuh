@@ -13,7 +13,7 @@
 PE_BEGIN
 
 template <typename T=float>
-PE_KERNEL void renderer(memory_t<uchar4> results, hittable<T>** world) {
+PE_KERNEL void renderer(uchar4* results, hittable<T>** world) {
   	uint32_t i = threadIdx.x + blockDim.x * blockIdx.x;
     uint32_t j = threadIdx.y + blockDim.y * blockIdx.y;
     uint32_t idx = j * gridDim.x * blockDim.x + i;
@@ -35,7 +35,7 @@ PE_KERNEL void renderer(memory_t<uchar4> results, hittable<T>** world) {
       auto v = ((T)(DEFAULT_IMAGE_HEIGHT - j) / (T)(DEFAULT_IMAGE_HEIGHT - 1));
       ray_t<T> r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
       vector_t<T, 3> pixel_color = ray_color<T>(r, *world);
-      reuslts[idx] = get_color<T>(pixel_color, 1)
+      results[idx] = get_color<T>(pixel_color, 1);
 	}
 }
 

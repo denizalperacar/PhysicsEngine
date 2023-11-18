@@ -19,6 +19,73 @@ void printGLFWInfo(GLFWwindow* w){
 	printf("GLFW: %s %i \n", opengl_profile.c_str(), p);
 }
 
+class glfw_window{
+
+public:
+
+  glfw_window(){
+    initGLFW();
+    // window = glfwGetCurrentContext();
+    printGLFWInfo(window);
+  }
+
+  void initGLFW() {
+    // Initialize GLFW
+    if (!glfwInit()) {
+        fprintf(stderr, "Failed to initialize GLFW\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Create a windowed mode window and its OpenGL context
+    window = glfwCreateWindow(DEFAULT_IMAGE_WIDTH, DEFAULT_IMAGE_HEIGHT, "CUDA-OpenGL Interop", NULL, NULL);
+    if (!window) {
+        glfwTerminate();
+        exit(EXIT_FAILURE);
+    }
+
+    // Make the window's context current
+    glfwMakeContextCurrent(window);
+  }
+
+
+  void display(memory_t<uchar4> device_data) {
+    // Map the CUDA resource to get a device pointer
+    uchar4* cudaPtr;
+    size_t size;
+
+    cudaGraphicsMapResources(1, &cudaResource, 0);
+    cudaGraphicsResourceGetMappedPointer((void**)&cudaPtr, &size, cudaResource);
+
+    // Copy the data from device_data to the OpenGL texture
+
+	  device_data.copy_to_device(cudaPtr, device_data.size());
+
+    // Unmap the CUDA resource
+    cudaGraphicsUnmapResources(1, &cudaResource, 0);
+
+    // Render the texture
+    glClear(GL_COLOR_BUFFER_BIT);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, glTexture);
+
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex2f(-1.0f, -1.0f);
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex2f(1.0f, -1.0f);
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex2f(1.0f, 1.0f);
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex2f(-1.0f, 1.0f);
+    glEnd();
+
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+  }
+
+  GLFWwindow* window;
+
+};
 
 PE_END
 

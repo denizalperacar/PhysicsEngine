@@ -63,7 +63,7 @@ public:
 		copy_from_device(obj);
 	}
 
-	U* data() {
+  U* data() {
 		return device_ptr;
 	}
 
@@ -246,8 +246,17 @@ public:
 		cudaMemcpy(device_ptr, obj.device_ptr, size * sizeof(U), PE_DTD);
 	}
 
-  void copy_from_device(memory_t<U>& obj) {
-		copy_from_device(obj, obj.m_size);
+	void copy_to_device(U*& obj, const size_t size) {
+
+		if (size == 0) {
+			return;
+		}
+
+		cudaMemcpy(device_ptr, obj, size * sizeof(U), PE_DTD);
+	}
+
+  void copy_to_device(memory_t<U>& obj) {
+		copy_to_device(obj, obj.m_size);
 	}
 
   memory_t<U> copy(size_t size) const {
