@@ -49,8 +49,6 @@ using namespace std::chrono;
 
 PE_BEGIN
 
-
-#define cudaErr(x) fmt::println("CUDA ERR CHECK:/n    {} {}", x, cudaGetErrorString(cudaGetLastError()));
 #define STRINGIFY(x) #x
 
 // utility functions

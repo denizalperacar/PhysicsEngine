@@ -48,7 +48,7 @@ public:
   }
 
 
-  void display(memory_t<uchar4>& device_data) {
+  void display(uchar4*& device_data) {
     // Map the CUDA resource to get a device pointer
     uchar4* cudaPtr;
     size_t size;
@@ -57,8 +57,11 @@ public:
     cudaGraphicsResourceGetMappedPointer((void**)&cudaPtr, &size, cudaResource);
 
     // Copy the data from device_data to the OpenGL texture
+    size_t width = DEFAULT_IMAGE_WIDTH;
+    size_t height = DEFAULT_IMAGE_HEIGHT;
 
-	  device_data.copy_to_device(cudaPtr, device_data.size());
+	  cudaMemcpy(cudaPtr, device_data, DEFAULT_IMAGE_WIDTH * DEFAULT_IMAGE_HEIGHT * sizeof(uchar4), PE_DTD);
+    cudaErr("Memcpy from device to mapped OpenGL texture: ")
 
     // Unmap the CUDA resource
     cudaGraphicsUnmapResources(1, &cudaResource, 0);
