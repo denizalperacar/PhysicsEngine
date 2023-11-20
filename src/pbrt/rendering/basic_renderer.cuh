@@ -36,8 +36,6 @@ PE_KERNEL void renderer(uchar4* results, hittable<T>** world) {
     ray_t<T> r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
     vector_t<T, 3> pixel_color = ray_color<T>(r, *world);
     results[idx] = get_color<T>(pixel_color, 1);
-    // results[idx] = make_uchar4(255, 0, 0, 255);
-    // printf("%u %u %u\n", results[idx].x, results[idx].y, results[idx].z);
 	}
 }
 
