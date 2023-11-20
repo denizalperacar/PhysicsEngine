@@ -45,7 +45,7 @@ target_include_directories(physics_engine PRIVATE "/usr/local/cuda/include/" "${
 set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -Wno-unused-variable -Wno-unused-but-set-variable -lglfw -lglfw3 -lglew -lGL -lm -lX11 -lpthread -lXi -lXrandr -ldl -lglut" )
 
 
-target_link_libraries(physics_engine fmt::fmt glfw GLEW::GLEW OpenGL::OpenGL ${GLUT_LIBRARY})
+target_link_libraries(physics_engine fmt::fmt glfw GLEW::GLEW OpenGL::OpenGL ${GLUT_LIBRARY} GLU)
 
 message(STATUS "USE_CUDA: ${USE_CUDA}")
 

@@ -32,6 +32,7 @@
 #include <cuda_fp16.h>
 
 #include <GL/glew.h>
+#include <GL/glut.h> // import glut before glew3?
 #include <GLFW/glfw3.h>
 #include <cuda_gl_interop.h>
 
@@ -79,9 +80,9 @@ constexpr uint32_t DEFAULT_IMAGE_HEIGHT = static_cast<uint32_t>((float)DEFAULT_I
 constexpr uint32_t DEFAULT_NUMBER_OF_PIXELS = DEFAULT_IMAGE_WIDTH * DEFAULT_IMAGE_HEIGHT;
 
 
-GLuint pbo; // OpenGL Pixel Buffer Object
-GLuint textureID; // OpenGL Texture ID
-cudaGraphicsResource* cudaPboResource; // CUDA-OpenGL interop resource
+GLuint pbo = 0;     // OpenGL pixel buffer object
+GLuint tex = 0;     // OpenGL texture object
+struct cudaGraphicsResource *cuda_pbo_resource;
 
 PE_END
 
