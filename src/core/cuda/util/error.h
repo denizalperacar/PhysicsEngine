@@ -6,7 +6,9 @@
 
 PE_BEGIN
 
-#define cudaErr(x) fmt::print("CUDA ERR CHECK:\n    {} {}\n", x, cudaGetErrorString(cudaGetLastError()));
+#define cudaErr(x) if (!CUDAERRORSUPRESS) \ 
+  fmt::print("CUDA ERR CHECK:\n    {} {}\n", x, cudaGetErrorString(cudaGetLastError())) \
+;
 
 PE_END
 
