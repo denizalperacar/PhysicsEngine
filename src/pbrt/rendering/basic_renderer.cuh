@@ -13,7 +13,7 @@
 PE_BEGIN
 
 template <typename T=float>
-PE_KERNEL void renderer(uchar4* results, hittable<T>** world) {
+PE_KERNEL void renderer(uchar4* results, hittable<T>** world, int n) {
   uint32_t i = threadIdx.x + blockDim.x * blockIdx.x;
   uint32_t j = threadIdx.y + blockDim.y * blockIdx.y;
   uint32_t idx = j * gridDim.x * blockDim.x + i;
@@ -31,11 +31,15 @@ PE_KERNEL void renderer(uchar4* results, hittable<T>** world) {
     auto lower_left_corner = origin - horizontal / (T)2.f - vertical / (T)2.f - vector_t<T, 3>((T)0.f, (T)0.f, focal_length);
 
     render_color c;
-    auto u = ((T)(i) / (T)(DEFAULT_IMAGE_WIDTH - 1));
-    auto v = ((T)(DEFAULT_IMAGE_HEIGHT - j) / (T)(DEFAULT_IMAGE_HEIGHT - 1));
-    ray_t<T> r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
-    vector_t<T, 3> pixel_color = ray_color<T>(r, *world);
-    results[idx] = get_color<T>(pixel_color, 1);
+    vector_t<T, 3> pixel_color((T)0.);
+    for (int k = 0; k < n; k++) {
+      auto u = ((T)(i) / (T)(DEFAULT_IMAGE_WIDTH - 1));
+      auto v = ((T)(DEFAULT_IMAGE_HEIGHT - j) / (T)(DEFAULT_IMAGE_HEIGHT - 1));
+      ray_t<T> r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
+      pixel_color += ray_color<T>(r, *world);
+    }
+
+    results[idx] = get_color<T>(pixel_color, n);
 	}
 }
 

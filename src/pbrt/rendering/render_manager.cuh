@@ -13,7 +13,7 @@ PE_BEGIN
 // [TODO]convet all of this to a class 
 #define DELTA 5 // pixel increment for arrow keys
 
-#define TITLE_STRING "flashlight: distance image display app"
+#define TITLE_STRING "Render Display"
 int2 loc = {DEFAULT_IMAGE_WIDTH/2, DEFAULT_IMAGE_HEIGHT/2};
 bool dragMode = false; // mouse tracking mode
 
@@ -63,7 +63,8 @@ void render() {
 	world.allocate_memory(max_object_count * sizeof(hittable<float>*));
 	two_spheres << <1, 1 >> > (lists.data(), world.data());
 
-  uchar4 *img = 0;
+  uchar4* img;
+
   cudaGraphicsMapResources(1, &cuda_pbo_resource, 0);
   cudaGraphicsResourceGetMappedPointer((void **)&img, NULL, cuda_pbo_resource);
   
@@ -74,10 +75,15 @@ void render() {
 	dim3 block(NUM_THREADS_MIN, NUM_THREADS_MIN);
 
 	// update renderer
-	renderer<<<grid, block>>>(img, world.data());
+
+	auto start = std::chrono::high_resolution_clock::now();
+	renderer<<<grid, block>>>(img, world.data(), 100);
 	cudaErr("renderer error check: ")
 	cudaDeviceSynchronize();
 	cudaErr("renderer error check: ")
+	auto end = std::chrono::high_resolution_clock::now();
+	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+	std::cout << "Time taken: " << duration << "ms" << std::endl;
 
   cudaGraphicsUnmapResources(1, &cuda_pbo_resource, 0);
 }
@@ -143,7 +149,7 @@ int render_manager(int argc, char** argv) {
 	glutSpecialFunc(handleSpecialKeypress);
 	glutPassiveMotionFunc(mouseMove);
 	glutMotionFunc(mouseDrag);
-	glutDisplayFunc(display);
+	glutDisplayFunc(display<4>);
 	initPixelBuffer();
 	glutMainLoop();
 	atexit(exitfunc);
