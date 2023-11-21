@@ -15,6 +15,14 @@ set(COMMON_DIR "${CORE_DIR}/common/")
 set(VECTOR_DIR "${CORE_DIR}/linear_transformations/")
 set(PCH_DIR    "${ROOT_DIR}/include/")
 set(JPEG_DIR   "${ROOT_DIR}/dependencies/toojpeg/")
+set(PCG_DIR    "${ROOT_DIR}/dependencies/pcg32/")
+
+set(
+  EXTERNAL_INCLUDES 
+  "${COMMON_DIR}" ${PCH_DIR} 
+  ${VECTOR_DIR} ${GLUT_INCLUDE_DIRS}
+  ${PCG_DIR}
+)
 
 message("-- PCH_DIR" ${PCH_DIR})
 
@@ -38,7 +46,7 @@ else()
   target_link_libraries(physics_engine fmt::fmt)
 endif()
 
-target_include_directories(physics_engine PRIVATE "/usr/local/cuda/include/" "${COMMON_DIR}" ${PCH_DIR} ${VECTOR_DIR} ${GLUT_INCLUDE_DIRS})  
+target_include_directories(physics_engine PRIVATE "/usr/local/cuda/include/" ${EXTERNAL_INCLUDES})  
 
 # Specify the precompiled header file
 

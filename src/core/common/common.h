@@ -15,6 +15,8 @@
 #include "helpers.h"
 #include "constants.h"
 
+#include "pcg32.h"
+
 #include <cstdint>
 #include <cmath>
 #include <vector>

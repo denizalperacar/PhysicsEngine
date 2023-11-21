@@ -149,7 +149,7 @@ int render_manager(int argc, char** argv) {
 	glutSpecialFunc(handleSpecialKeypress);
 	glutPassiveMotionFunc(mouseMove);
 	glutMotionFunc(mouseDrag);
-	glutDisplayFunc(display<4>);
+	glutDisplayFunc(display);
 	initPixelBuffer();
 	glutMainLoop();
 	atexit(exitfunc);
