@@ -85,7 +85,7 @@ using enable_if_size_and_type_match_t = std::enable_if_t<sizeof...(Ts) == N && c
   }\
   \
   PE_HOST_DEVICE static constexpr uint32_t size() { return DIM; } \
-  PE_HOST_DEVICE static constexpr uint32_t alignment() { return ALIGNMENT; } \
+  PE_HOST_DEVICE static constexpr uint32_t alignment() { return ALIGNMENT; }
 
 
 template <template <typename> class Child, typename T, uint32_t DIM, size_t ALIGNMENT=sizeof(T)>
@@ -166,6 +166,9 @@ public:
     return *this;
   }
 };
+
+
+
 
 
 #undef PE_TUPLE_BASE
