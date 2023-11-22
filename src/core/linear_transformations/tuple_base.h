@@ -139,9 +139,36 @@ public:
 
 };
 
+template <template <typename> class Child, typename T, size_t ALIGNMENT>
+struct alignas(ALIGNMENT) tuple_t<Child, T, 4, ALIGNMENT> {
+
+public:
+  static constexpr uint32_t DIM = 4;
+  PE_TUPLE_BASE  
+  union {T x, r; };
+  union {T y, g; };
+  union {T z, b; };
+  union {T w, a; };
+
+  PE_HOST_DEVICE tuple_t(T a, T b, T c, T d) : x(a), y(b), z(c), w(d) {}
+  template<size_t A> PE_HOST_DEVICE tuple_t(tuple_t<Child, T, 2, A> a, T b, T c) : x(a.x), y(a.y), z(b), w(c) {}
+  template<size_t A> PE_HOST_DEVICE tuple_t(T a, tuple_t<Child, T, 2, A> b, T c) : x(a), y(b.x), z(b.y), w(c) {}
+  template<size_t A> PE_HOST_DEVICE tuple_t(T a, T b, tuple_t<Child, T, 2, A> c) : x(a), y(b), z(c.x), w(c.y) {}
+  template<size_t A> PE_HOST_DEVICE tuple_t(tuple_t<Child, T, 3, A> a, T b) : x(a.x), y(a.y), z(a.z), w(b) {}
+  template<size_t A> PE_HOST_DEVICE tuple_t(T a, tuple_t<Child, T, 3, A> b) : x(a), y(b.x), z(b.y), w(b.z) {}
+  template<size_t A, size_t B> PE_HOST_DEVICE tuple_t(tuple_t<Child, T, 2, A> a, tuple_t<Child, T, 2, B> b) : x(a.x), y(a.y), z(b.x), w(b.y) {}
+  template<size_t A> PE_HOST_DEVICE tuple_t(tuple_t<Child, T, 3, A>& a) : x(a.x), y(a.y), z(a.z), w((T)0) {}
+  template<size_t A> PE_HOST_DEVICE tuple_t<Child, T, 4, ALIGNMENT>& operator=(const tuple_t<Child, T, 3, A>& a) {
+    x = a.x;
+    y = a.y;
+    z = a.z;
+    w = (T)0;
+    return *this;
+  }
+};
 
 
-
+#undef PE_TUPLE_BASE
 PE_END
 
 
