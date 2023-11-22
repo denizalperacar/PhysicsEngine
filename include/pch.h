@@ -6,6 +6,7 @@
 #include "../src/core/cuda/util/error.h"
 #include "../src/core/cuda/functions/parallel_for.h"
 #include "../src/core/linear_transformations/vector_base.h"
+#include "../src/core/linear_transformations/tuple_base.h"
 #include "../src/core/linear_transformations/matrix_base.h"
 #include "../src/core/linear_transformations/rotation_dyads.h"
 #include "../src/core/linear_transformations/quaternion.h"

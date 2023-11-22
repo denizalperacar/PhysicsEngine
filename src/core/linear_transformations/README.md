@@ -61,3 +61,17 @@
 - [X] add quaternion inversion
 
 - [ ] construct dcm from 2 vectors
+
+
+## PBRT Chapter3 
+
+In this chapter authors write a Tuple class which accepts a template template parameter then creat a distinct type 
+for different entities that have the same base class. 
+
+For the vector_base here we created a general purpose vector that stores any number of variables. I have decided to create
+a second vector_base that is based on both definitions and extend that. The reason is the fact that the same concepts will 
+be helpful in the creation of the multi body dynamics engine. Yet another issue is that they might restrict and limit the 
+operations that can be performed but that is something that I will see later when I am designing the multi-body engine.
+
+At least having two different vector bases allows me decrease the rebase time when I decide on what I am going to use.
+

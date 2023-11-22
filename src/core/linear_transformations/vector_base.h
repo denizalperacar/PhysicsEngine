@@ -209,6 +209,7 @@ template <typename T> PE_HOST_DEVICE T log2(T a) { return std::log2(a); }
 template <typename T> PE_HOST_DEVICE T log10(T a) { return std::log2(a) / std::log2(10); }
 template <typename T> PE_HOST_DEVICE T clamp(T a, T b, T c) { return a < b ? b : (c < a ? c : a); }
 template <typename T> PE_HOST_DEVICE T mix(T a, T b, T c) { return a * ((T)1 - c) + b * c; }
+template <typename T> PE_HOST_DEVICE T lerp(T a, T b, T x) { return a * ((T)1 - x) + b * x; } // TODO add it to operations
 
 template <typename T> PE_HOST_DEVICE T isfinite(T a) {
 #if defined(__CUDA_ARCH__)
