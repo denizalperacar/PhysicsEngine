@@ -88,7 +88,7 @@ using enable_if_size_and_type_match_t = std::enable_if_t<sizeof...(Ts) == N && c
   PE_HOST_DEVICE static constexpr uint32_t alignment() { return ALIGNMENT; }
 
 
-template <template <typename> class Child, typename T, uint32_t DIM, size_t ALIGNMENT=sizeof(T)>
+template <template <class, uint32_t, size_t> class Child, typename T, uint32_t DIM, size_t ALIGNMENT=sizeof(T)>
 class alignas(ALIGNMENT) tuple_t {
 
 public:
@@ -102,7 +102,7 @@ public:
   }
 };
 
-template <template <typename> class Child, typename T, size_t ALIGNMENT>
+template <template <class, uint32_t, size_t> class Child, typename T, size_t ALIGNMENT>
 struct alignas(ALIGNMENT) tuple_t<Child, T, 1, ALIGNMENT> {
 
 public:
@@ -112,7 +112,7 @@ public:
 };
 
 
-template <template <typename> class Child, typename T, size_t ALIGNMENT>
+template <template <class, uint32_t, size_t> class Child, typename T, size_t ALIGNMENT>
 class alignas(ALIGNMENT) tuple_t<Child, T, 2, ALIGNMENT> {
 
 public:
@@ -124,7 +124,7 @@ public:
 };
 
 
-template <template <typename> class Child, typename T, size_t ALIGNMENT>
+template <template <class, uint32_t, size_t> class Child, typename T, size_t ALIGNMENT>
 class alignas(ALIGNMENT) tuple_t<Child, T, 3, ALIGNMENT> {
 
 public:
@@ -139,7 +139,7 @@ public:
 
 };
 
-template <template <typename> class Child, typename T, size_t ALIGNMENT>
+template <template <class, uint32_t, size_t> class Child, typename T, size_t ALIGNMENT>
 struct alignas(ALIGNMENT) tuple_t<Child, T, 4, ALIGNMENT> {
 
 public:
@@ -168,9 +168,109 @@ public:
 };
 
 
+// define the elemtwise operations on vector
+#define TTUP tuple_t<Child, T, D, A>
+#define CTUP Child<decltype(T{} + U{}), D, A>
+#define BTUP tuple_t<Child, bool, D, A>
+
+#define ELEMENTWISE_OP(operator, result_type, expression, ...) \
+template< template <class, uint32_t, size_t> class Child, typename U, typename T, uint32_t D, size_t A> \
+PE_HOST_DEVICE auto operator(__VA_ARGS__) -> result_type { \
+  result_type result; \
+  PE_UNROLL \
+  for (uint32_t ind = 0; ind < D; ind++) { \
+    result[ind] = expression; \
+  } \
+  return result;\
+}
+
+ELEMENTWISE_OP(operator+, TTUP, a[ind] + b[ind], const TTUP &a, const TTUP &b)
+ELEMENTWISE_OP(operator+, CTUP, a[ind] + b[ind], const TTUP &a, const CTUP &b)
+ELEMENTWISE_OP(operator+, CTUP, a[ind] + b[ind], const CTUP &a, const TTUP &b)
+
+ELEMENTWISE_OP(operator+, CTUP, a + b[ind], T a, const CTUP &b)
+ELEMENTWISE_OP(operator+, CTUP, a[ind] + b, const CTUP &a, T b)
+ELEMENTWISE_OP(operator+, TTUP, a + b[ind], T a, const TTUP &b)
+ELEMENTWISE_OP(operator+, TTUP, a[ind] + b, const TTUP &a, T b)
+
+// TODO : Add all the permuataions of cases below for CTUP and TTUP
+
+ELEMENTWISE_OP(operator-, TTUP, a[ind] - b[ind], const TTUP &a, const TTUP &b)
+ELEMENTWISE_OP(operator-, TTUP, a - b[ind], T a, const TTUP &b)
+ELEMENTWISE_OP(operator-, TTUP, a[ind] - b, const TTUP &a, T b)
+ELEMENTWISE_OP(operator-, TTUP, -a[ind], const TTUP &a)
+
+ELEMENTWISE_OP(operator*, TTUP, a[ind] * b[ind], const TTUP &a, const TTUP &b)
+ELEMENTWISE_OP(operator*, TTUP, a * b[ind], T a, const TTUP &b)
+ELEMENTWISE_OP(operator*, TTUP, a[ind] * b, const TTUP &a, T b)
+
+ELEMENTWISE_OP(operator/, TTUP, a[ind] / b[ind], const TTUP &a, const TTUP &b)
+ELEMENTWISE_OP(operator/, TTUP, a / b[ind], T a, const TTUP &b)
+ELEMENTWISE_OP(operator/, TTUP, a[ind] / b, const TTUP &a, T b)
+
+ELEMENTWISE_OP(min, TTUP, min(a[ind], b[ind]), const TTUP& a, const TTUP& b)
+ELEMENTWISE_OP(min, TTUP, min(a[ind], b), const TTUP& a, T b)
+ELEMENTWISE_OP(min, TTUP, min(a, b[ind]), T a, const TTUP& b)
+
+ELEMENTWISE_OP(atan2, TTUP, atan2(a[ind], b[ind]), const TTUP& a, const TTUP& b)
+ELEMENTWISE_OP(atan2, TTUP, atan2(a[ind], b), const TTUP& a, T b)
+ELEMENTWISE_OP(atan2, TTUP, atan2(a, b[ind]), T a, const TTUP& b)
+
+ELEMENTWISE_OP(max, TTUP, max(a[ind], b[ind]), const TTUP& a, const TTUP& b)
+ELEMENTWISE_OP(max, TTUP, max(a[ind], b), const TTUP& a, T b)
+ELEMENTWISE_OP(max, TTUP, max(a, b[ind]), T a, const TTUP& b)
+
+ELEMENTWISE_OP(pow, TTUP, pow(a[ind], b[ind]), const TTUP& a, const TTUP& b)
+ELEMENTWISE_OP(pow, TTUP, pow(a[ind], b), const TTUP& a, T b)
+ELEMENTWISE_OP(pow, TTUP, pow(a, b[ind]), T a, const TTUP& b)
+
+ELEMENTWISE_OP(distance, TTUP, distance(a[ind], b[ind]), const TTUP& a, const TTUP& b)
+ELEMENTWISE_OP(distance, TTUP, distance(a[ind], b), const TTUP& a, T b)
+ELEMENTWISE_OP(distance, TTUP, distance(a, b[ind]), T a, const TTUP& b)
+
+ELEMENTWISE_OP(copysign, TTUP, copysign(a[ind], b[ind]), const TTUP& a, const TTUP& b)
+ELEMENTWISE_OP(copysign, TTUP, copysign(a[ind], b), const TTUP& a, T b)
+ELEMENTWISE_OP(copysign, TTUP, copysign(a, b[ind]), T a, const TTUP& b)
+
+ELEMENTWISE_OP(sign, TTUP, sign(a[ind]), const TTUP& a)
+ELEMENTWISE_OP(floor, TTUP, floor(a[ind]), const TTUP& a)
+ELEMENTWISE_OP(ceil, TTUP, ceil(a[ind]), const TTUP& a)
+ELEMENTWISE_OP(abs, TTUP, abs(a[ind]), const TTUP& a)
+ELEMENTWISE_OP(sin, TTUP, sin(a[ind]), const TTUP& a)
+ELEMENTWISE_OP(asin, TTUP, asin(a[ind]), const TTUP& a)
+ELEMENTWISE_OP(cos, TTUP, cos(a[ind]), const TTUP& a)
+ELEMENTWISE_OP(acos, TTUP, acos(a[ind]), const TTUP& a)
+ELEMENTWISE_OP(tan, TTUP, tan(a[ind]), const TTUP& a)
+ELEMENTWISE_OP(tanh, TTUP, tanh(a[ind]), const TTUP& a)
+ELEMENTWISE_OP(atan, TTUP, atan(a[ind]), const TTUP& a)
+ELEMENTWISE_OP(sqrt, TTUP, sqrt(a[ind]), const TTUP& a)
+ELEMENTWISE_OP(exp, TTUP, exp(a[ind]), const TTUP& a)
+ELEMENTWISE_OP(log, TTUP, log(a[ind]), const TTUP& a)
+ELEMENTWISE_OP(log2, TTUP, log2(a[ind]), const TTUP& a)
+ELEMENTWISE_OP(log10, TTUP, log10(a[ind]), const TTUP& a)
+ELEMENTWISE_OP(isfinite, BTUP, isfinite(a[ind]), const TTUP& a)
+
+ELEMENTWISE_OP(clamp, TTUP, clamp(a[ind], b[ind], c[ind]), const TTUP& a, const TTUP& b, const TTUP& c)
+ELEMENTWISE_OP(clamp, TTUP, clamp(a[ind], b[ind], c), const TTUP& a, const TTUP& b, T c)
+ELEMENTWISE_OP(clamp, TTUP, clamp(a[ind], b, c[ind]), const TTUP& a, T b, const TTUP& c)
+ELEMENTWISE_OP(clamp, TTUP, clamp(a[ind], b, c), const TTUP& a, T b, T c)
+
+ELEMENTWISE_OP(mix, TTUP, a[ind] * ((T)1 - c[ind]) + b[ind] * c[ind], const TTUP& a, const TTUP& b, const TTUP& c)
+ELEMENTWISE_OP(mix, TTUP, a[ind] * ((T)1 - c) + b[ind] * c, const TTUP& a, const TTUP& b, T c)
+
+ELEMENTWISE_OP(fma, TTUP, fma(a[ind], b[ind], c[ind]), const TTUP& a, const TTUP& b, const TTUP& c)
+ELEMENTWISE_OP(fma, TTUP, fma(a[ind], b[ind], c), const TTUP& a, const TTUP& b, T c)
+ELEMENTWISE_OP(fma, TTUP, fma(a[ind], b, c[ind]), const TTUP& a, T b, const TTUP& c)
+ELEMENTWISE_OP(fma, TTUP, fma(a[ind], b, c), const TTUP& a, T b, T c)
+ELEMENTWISE_OP(fma, TTUP, fma(a, b[ind], c[ind]), T a, const TTUP& b, const TTUP& c)
+ELEMENTWISE_OP(fma, TTUP, fma(a, b[ind], c), T a, const TTUP& b, T c)
+ELEMENTWISE_OP(fma, TTUP, fma(a, b, c[ind]), T a, T b, const TTUP& c)
 
 
 
+
+#undef TTUP
+#undef BTUP
 #undef PE_TUPLE_BASE
 PE_END
 
